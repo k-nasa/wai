@@ -1,5 +1,6 @@
 use crate::module::Module;
 
+#[derive(Debug)]
 pub struct Instance {
     module: Module,
 }

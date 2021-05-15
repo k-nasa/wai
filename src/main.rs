@@ -1,10 +1,19 @@
 use wasm_interpreter::*;
 
 fn main() -> anyhow::Result<()> {
-    let m = Module::from_byte(b"hoehoge")?;
+    let args: Vec<String> = std::env::args().collect();
+    if args.is_empty() {
+        anyhow::bail!("Plese speficy filepath")
+    }
 
-    let instance = Instance::new(m);
-    instance.invoke("hoge")?;
+    let filename = &args[1];
+    let bytes = std::fs::read(filename).unwrap();
+
+    let m = Module::from_byte(bytes)?;
+
+    println!("{:?}", m);
+    // let instance = Instance::new(m);
+    // instance.invoke("hoge")?;
 
     Ok(())
 }

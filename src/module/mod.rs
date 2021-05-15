@@ -1,6 +1,9 @@
 use crate::decoder;
 
-pub struct Module {}
+#[derive(Debug)]
+pub struct Module {
+    pub(crate) version: u32,
+}
 
 impl Module {
     pub fn from_byte(byte: impl AsRef<[u8]>) -> Result<Self, decoder::DecodeError> {
