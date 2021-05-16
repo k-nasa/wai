@@ -1,3 +1,5 @@
+use crate::opcode::Opcode;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum ValueType {
     I32,
@@ -113,7 +115,7 @@ pub struct CodeSection {
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionBody {
     pub(crate) locales: Vec<LocalEntry>,
-    pub(crate) code: Vec<u8>,
+    pub(crate) code: Vec<Opcode>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
