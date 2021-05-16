@@ -43,23 +43,22 @@ impl Module {
     }
 
     // TODO refactor, section_typeとsectionの両方を取る必要はない
-    pub(crate) fn take_in(&mut self, section_type: SectionType, section: ()) {
-        use SectionType::*;
+    pub(crate) fn take_in(&mut self, section: Section) {
+        use Section::*;
 
-        match section_type {
-            Custom => self.custom_section = Some(section),
-            Type => self.type_section = Some(section),
-            Import => self.import_section = Some(section),
-            Function => self.function_section = Some(section),
-            Table => self.table_section = Some(section),
-            Memory => self.memory_section = Some(section),
-            Global => self.global_section = Some(section),
-            Export => self.export_section = Some(section),
-            Start => self.start_section = Some(section),
-            Element => self.element_section = Some(section),
-            Code => self.code_section = Some(section),
-            Data => self.data_section = Some(section),
-            Unsuport => (),
+        match section {
+            Custom(i) => self.custom_section = Some(i),
+            Type(i) => self.type_section = Some(i),
+            Import(i) => self.import_section = Some(i),
+            Function(i) => self.function_section = Some(i),
+            Table(i) => self.table_section = Some(i),
+            Memory(i) => self.memory_section = Some(i),
+            Global(i) => self.global_section = Some(i),
+            Export(i) => self.export_section = Some(i),
+            Start(i) => self.start_section = Some(i),
+            Element(i) => self.element_section = Some(i),
+            Code(i) => self.code_section = Some(i),
+            Data(i) => self.data_section = Some(i),
         }
     }
 }
@@ -100,4 +99,20 @@ impl From<u8> for SectionType {
             _ => Unsuport,
         }
     }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum Section {
+    Custom(()),
+    Type(()),
+    Import(()),
+    Function(()),
+    Table(()),
+    Memory(()),
+    Global(()),
+    Export(()),
+    Start(()),
+    Element(()),
+    Code(()),
+    Data(()),
 }
