@@ -32,11 +32,11 @@ impl From<std::io::Error> for DecodeError {
 /// wasmバイナリをデコードしてwasm moduleを返す
 pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
     let mut cursor = Cursor::new(buf);
+    let mut m = Module::default();
 
     validate_wasm_format(&mut cursor)?;
-    let version = decode_version(&mut cursor)?;
+    m.version = decode_version(&mut cursor)?;
 
-    let mut m = Module::default();
     loop {
         if cursor.position() >= buf.len() as u64 {
             break;
