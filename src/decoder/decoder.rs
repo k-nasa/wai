@@ -5,6 +5,7 @@ use std::io::Cursor;
 use std::io::Read;
 
 const MAGIC_NUMBER: &[u8] = b"\0asm";
+const FUNC_TYPE: u8 = 0x60;
 
 pub(crate) struct Decoder<'a> {
     reader: Cursor<&'a [u8]>,
@@ -80,10 +81,42 @@ impl<'a> Decoder<'a> {
     }
 
     pub(crate) fn decode_type_section(&mut self, size: u32) -> Result<Section, DecodeError> {
-        let mut custom_section = vec![0; size as usize];
-        self.reader.read_exact(&mut custom_section)?;
+        let mut type_section = vec![0; size as usize];
+        self.reader.read_exact(&mut type_section)?;
 
-        Ok(Section::Type(()))
+        let mut type_section_decoder = Decoder::new(Cursor::new(&type_section));
+        let mut type_section = TypeSection {
+            entries: Vec::new(),
+        };
+
+        let entry_count = type_section_decoder.decode_ver_uint_n()?;
+        for _ in 0..entry_count.into() {
+            let func_type = type_section_decoder.read_next()?;
+            if func_type != FUNC_TYPE {
+                return Err(DecodeError::Unexpected);
+            }
+
+            let mut func_type = FuncType {
+                params: vec![],
+                returns: vec![],
+            };
+
+            let arg_count = type_section_decoder.decode_ver_uint_n()?;
+            for _ in 0..arg_count.into() {
+                let t = type_section_decoder.decode_ver_uint_n()?;
+                func_type.params.push(ValueType::from(t));
+            }
+
+            let returns_count = type_section_decoder.decode_ver_uint_n()?;
+            for _ in 0..returns_count.into() {
+                let t = type_section_decoder.decode_ver_uint_n()?;
+                func_type.returns.push(ValueType::from(t));
+            }
+
+            type_section.entries.push(func_type)
+        }
+
+        Ok(Section::Type(type_section))
     }
 
     pub(crate) fn decode_import_section(&mut self, size: u32) -> Result<Section, DecodeError> {
@@ -94,10 +127,19 @@ impl<'a> Decoder<'a> {
     }
 
     pub(crate) fn decode_function_section(&mut self, size: u32) -> Result<Section, DecodeError> {
-        let mut custom_section = vec![0; size as usize];
-        self.reader.read_exact(&mut custom_section)?;
+        let mut func_section = vec![0; size as usize];
+        self.reader.read_exact(&mut func_section)?;
 
-        Ok(Section::Function(()))
+        let mut func_section_decoder = Decoder::new(Cursor::new(&func_section));
+        let mut func_section = FunctionSection { types: Vec::new() };
+
+        let count: u32 = func_section_decoder.decode_ver_uint_n()?.into();
+        for _ in 0..count {
+            let t = func_section_decoder.decode_ver_uint_n()?;
+            func_section.types.push(t.into());
+        }
+
+        Ok(Section::Function(func_section))
     }
 
     pub(crate) fn decode_table_section(&mut self, size: u32) -> Result<Section, DecodeError> {

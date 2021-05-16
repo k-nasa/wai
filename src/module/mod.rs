@@ -1,12 +1,13 @@
 use crate::decoder;
+use crate::types::*;
 
 #[derive(Debug)]
 pub struct Module {
     pub(crate) version: u32,
     pub(crate) custom_section: Option<()>,
-    pub(crate) type_section: Option<()>,
+    pub(crate) type_section: Option<TypeSection>,
     pub(crate) import_section: Option<()>,
-    pub(crate) function_section: Option<()>,
+    pub(crate) function_section: Option<FunctionSection>,
     pub(crate) table_section: Option<()>,
     pub(crate) memory_section: Option<()>,
     pub(crate) global_section: Option<()>,
@@ -101,12 +102,12 @@ impl From<u8> for SectionType {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub enum Section {
     Custom(()),
-    Type(()),
+    Type(TypeSection),
     Import(()),
-    Function(()),
+    Function(FunctionSection),
     Table(()),
     Memory(()),
     Global(()),
