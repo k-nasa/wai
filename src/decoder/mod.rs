@@ -4,6 +4,8 @@ use std::fmt::{self, Display};
 use std::io::Cursor;
 use std::io::Read;
 
+const MAGIC_NUMBER: &[u8] = b"\0asm";
+
 #[derive(Debug)]
 pub enum DecodeError {
     InvalidWasmFile,
@@ -42,7 +44,7 @@ fn validate_wasm_format(mut reader: impl Read) -> Result<(), DecodeError> {
     let mut magic_number = [0; 4];
     reader.read_exact(&mut magic_number)?;
 
-    if &magic_number != b"\0asm" {
+    if &magic_number != MAGIC_NUMBER {
         return Err(DecodeError::InvalidWasmFile);
     }
 
