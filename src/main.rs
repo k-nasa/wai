@@ -7,7 +7,7 @@ fn main() -> anyhow::Result<()> {
     }
 
     let filename = &args[1];
-    let bytes = std::fs::read(filename).unwrap();
+    let bytes = std::fs::read(filename)?;
 
     let m = Module::from_byte(bytes)?;
 
