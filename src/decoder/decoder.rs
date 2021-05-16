@@ -78,7 +78,7 @@ impl<'a> Decoder<'a> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
-        Ok(Section::Custom(()))
+        Ok(Section::Custom(())) // TODO implement!
     }
 
     pub(crate) fn decode_type_section(&mut self, size: u8) -> Result<Section, DecodeError> {

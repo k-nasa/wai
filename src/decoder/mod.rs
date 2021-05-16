@@ -1,6 +1,8 @@
 mod decoder;
 mod error;
 
+mod type_section;
+
 use decoder::Decoder;
 pub use error::DecodeError;
 
