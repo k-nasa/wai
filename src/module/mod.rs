@@ -14,7 +14,7 @@ pub struct Module {
     pub(crate) export_section: Option<ExportSection>,
     pub(crate) element_section: Option<()>,
     pub(crate) start_section: Option<()>,
-    pub(crate) code_section: Option<()>,
+    pub(crate) code_section: Option<CodeSection>,
     pub(crate) data_section: Option<()>,
 }
 
@@ -114,6 +114,6 @@ pub enum Section {
     Export(ExportSection),
     Start(()),
     Element(()),
-    Code(()),
+    Code(CodeSection),
     Data(()),
 }

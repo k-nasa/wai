@@ -104,3 +104,20 @@ impl From<VerUintN> for ExternalKind {
         }
     }
 }
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct CodeSection {
+    pub(crate) bodies: Vec<FunctionBody>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FunctionBody {
+    pub(crate) locales: Vec<LocalEntry>,
+    pub(crate) code: Vec<u8>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LocalEntry {
+    pub(crate) count: u32,
+    pub(crate) value_type: ValueType,
+}

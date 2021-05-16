@@ -206,10 +206,43 @@ impl<'a> Decoder<'a> {
     }
 
     pub(crate) fn decode_code_section(&mut self, size: u32) -> Result<Section, DecodeError> {
-        let mut custom_section = vec![0; size as usize];
-        self.reader.read_exact(&mut custom_section)?;
+        let mut section = vec![0; size as usize];
+        self.reader.read_exact(&mut section)?;
 
-        Ok(Section::Code(()))
+        let mut code_section_decoder = Decoder::new(Cursor::new(&section));
+        let mut code_section = CodeSection { bodies: Vec::new() };
+
+        let count: u32 = code_section_decoder.decode_ver_uint_n()?.into();
+
+        for _ in 0..count {
+            let body_size = code_section_decoder.decode_ver_uint_n()?;
+            let body_bytes = &code_section_decoder.read_byte(body_size.into())?;
+            let mut body = Decoder::new(Cursor::new(body_bytes));
+
+            let local_count = body.decode_ver_uint_n()?;
+
+            let mut function_body = FunctionBody {
+                locales: Vec::new(),
+                code: Vec::new(),
+            };
+
+            for _ in 0..local_count.into() {
+                let count = body.decode_ver_uint_n()?;
+                let t = body.decode_ver_uint_n()?;
+                let local_entry = LocalEntry {
+                    count: count.into(),
+                    value_type: ValueType::from(t),
+                };
+
+                function_body.locales.push(local_entry);
+            }
+
+            function_body.code = body.read_to_end()?;
+
+            code_section.bodies.push(function_body);
+        }
+
+        Ok(Section::Code(code_section))
     }
 
     pub(crate) fn decode_data_section(&mut self, size: u32) -> Result<Section, DecodeError> {
@@ -247,6 +280,13 @@ impl<'a> Decoder<'a> {
     fn read_byte(&mut self, size: usize) -> Result<Vec<u8>, DecodeError> {
         let mut buf = vec![0; size];
         self.reader.read(&mut buf)?;
+
+        Ok(buf)
+    }
+
+    fn read_to_end(&mut self) -> Result<Vec<u8>, DecodeError> {
+        let mut buf = vec![];
+        self.reader.read_to_end(&mut buf)?;
 
         Ok(buf)
     }
