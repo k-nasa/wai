@@ -36,7 +36,21 @@ pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
     validate_wasm_format(&mut cursor)?;
     let version = decode_version(&mut cursor)?;
 
-    Ok(Module { version })
+    Ok(Module {
+        version,
+        custom_section: None,
+        type_section: None,
+        import_section: None,
+        function_section: None,
+        table_section: None,
+        memory_section: None,
+        global_section: None,
+        export_section: None,
+        element_section: None,
+        start_section: None,
+        code_section: None,
+        data_section: None,
+    })
 }
 
 /// wasmバイナリのマジックナンバーを見て適切なファイルか(本当にwasmか)をチェックする
