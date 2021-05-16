@@ -10,7 +10,7 @@ impl Instance {
         Self { module }
     }
 
-    pub fn invoke(&self, name: impl AsRef<str>) -> std::io::Result<()> {
+    pub fn invoke(&self, _name: impl AsRef<str>) -> std::io::Result<()> {
         todo!()
     }
 }

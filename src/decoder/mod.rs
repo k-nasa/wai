@@ -86,7 +86,7 @@ impl<'a> Decoder<'a> {
         let mut magic_number = [0; 4];
         self.reader.read_exact(&mut magic_number)?;
 
-        if &magic_number != MAGIC_NUMBER {
+        if magic_number != *MAGIC_NUMBER {
             return Err(DecodeError::InvalidWasmFile);
         }
 
