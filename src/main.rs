@@ -11,7 +11,7 @@ fn main() -> anyhow::Result<()> {
 
     let m = Module::from_byte(bytes)?;
 
-    println!("{:?}", m);
+    dbg!(m);
     // let instance = Instance::new(m);
     // instance.invoke("hoge")?;
 

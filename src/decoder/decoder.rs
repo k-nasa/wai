@@ -164,10 +164,31 @@ impl<'a> Decoder<'a> {
     }
 
     pub(crate) fn decode_export_section(&mut self, size: u32) -> Result<Section, DecodeError> {
-        let mut custom_section = vec![0; size as usize];
-        self.reader.read_exact(&mut custom_section)?;
+        let mut section = vec![0; size as usize];
+        self.reader.read_exact(&mut section)?;
 
-        Ok(Section::Export(()))
+        let mut export_section_decoder = Decoder::new(Cursor::new(&section));
+        let mut export_section = ExportSection {
+            entries: Vec::new(),
+        };
+
+        let count: u32 = export_section_decoder.decode_ver_uint_n()?.into();
+        for _ in 0..count {
+            let field_len = export_section_decoder.decode_ver_uint_n()?;
+            let field_str =
+                String::from_utf8(export_section_decoder.read_byte(field_len.into())?).unwrap();
+            let kind = ExternalKind::from(export_section_decoder.decode_ver_uint_n()?);
+            let index = export_section_decoder.decode_ver_uint_n()?.into();
+
+            let entry = ExportEntry {
+                field_str,
+                kind,
+                index,
+            };
+            export_section.entries.push(entry);
+        }
+
+        Ok(Section::Export(export_section))
     }
 
     pub(crate) fn decode_start_section(&mut self, size: u32) -> Result<Section, DecodeError> {
@@ -221,5 +242,12 @@ impl<'a> Decoder<'a> {
         self.reader.read(&mut buf)?;
 
         Ok(buf[0])
+    }
+
+    fn read_byte(&mut self, size: usize) -> Result<Vec<u8>, DecodeError> {
+        let mut buf = vec![0; size];
+        self.reader.read(&mut buf)?;
+
+        Ok(buf)
     }
 }

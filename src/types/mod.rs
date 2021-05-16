@@ -23,15 +23,8 @@ impl From<u8> for ValueType {
 
 impl From<VerUintN> for ValueType {
     fn from(x: VerUintN) -> Self {
-        use ValueType::*;
-
-        match x.0 as u8 {
-            0x7f => I32,
-            0x02 => I64,
-            0x03 => F32,
-            0x04 => F64,
-            _ => Unknown,
-        }
+        let x: u32 = x.into();
+        ValueType::from(x as u8)
     }
 }
 
@@ -49,6 +42,18 @@ impl Into<u32> for VerUintN {
     }
 }
 
+impl Into<i32> for VerUintN {
+    fn into(self) -> i32 {
+        self.0 as i32
+    }
+}
+
+impl Into<usize> for VerUintN {
+    fn into(self) -> usize {
+        self.0 as usize
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct TypeSection {
     pub(crate) entries: Vec<FuncType>,
@@ -63,4 +68,39 @@ pub struct FuncType {
 #[derive(Debug, Clone, PartialEq)]
 pub struct FunctionSection {
     pub types: Vec<u32>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ExportSection {
+    pub entries: Vec<ExportEntry>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct ExportEntry {
+    pub field_str: String,
+    pub kind: ExternalKind,
+    pub index: u32,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum ExternalKind {
+    Function,
+    Table,
+    Memory,
+    Global,
+    Unknown,
+}
+
+impl From<VerUintN> for ExternalKind {
+    fn from(x: VerUintN) -> Self {
+        use ExternalKind::*;
+
+        match x.0 as u8 {
+            0x00 => Function,
+            0x01 => Table,
+            0x02 => Memory,
+            0x03 => Global,
+            _ => Unknown,
+        }
+    }
 }
