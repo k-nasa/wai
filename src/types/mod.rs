@@ -6,8 +6,16 @@ pub(crate) enum ValueType {
     F64(f64),
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct FuncType {
-    pub args: Vec<ValueType>,
-    pub results: Vec<ResultType>,
+pub struct VerUintN(u32);
+
+impl From<u32> for VerUintN {
+    fn from(x: u32) -> Self {
+        VerUintN(x)
+    }
+}
+
+impl Into<u32> for VerUintN {
+    fn into(self) -> u32 {
+        self.0
+    }
 }

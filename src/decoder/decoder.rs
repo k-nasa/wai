@@ -1,5 +1,6 @@
 use crate::decoder::error::DecodeError;
 use crate::module::{Section, SectionType};
+use crate::types::*;
 use std::io::Cursor;
 use std::io::Read;
 
@@ -37,23 +38,20 @@ impl<'a> Decoder<'a> {
         Ok(u32::from_le_bytes(version))
     }
 
-    pub(crate) fn decode_section_type(&mut self) -> Result<(SectionType, u8), DecodeError> {
+    pub(crate) fn decode_section_type(&mut self) -> Result<(SectionType, u32), DecodeError> {
         let mut section_number = [0; 1];
         self.reader.read_exact(&mut section_number)?;
 
-        let mut section_size = [0; 1];
-        self.reader.read_exact(&mut section_size)?;
-        let section_size = section_size[0];
-
+        let section_size = self.decode_ver_uint_n()?;
         let section_type = SectionType::from(section_number[0]);
 
-        Ok((section_type, section_size))
+        Ok((section_type, section_size.into()))
     }
 
     pub(crate) fn decode_section(
         &mut self,
         section_type: SectionType,
-        section_size: u8,
+        section_size: u32,
     ) -> Result<Section, DecodeError> {
         let section = match section_type {
             SectionType::Custom => self.decode_custom_section(section_size)?,
@@ -74,87 +72,112 @@ impl<'a> Decoder<'a> {
         Ok(section)
     }
 
-    pub(crate) fn decode_custom_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_custom_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Custom(())) // TODO implement!
     }
 
-    pub(crate) fn decode_type_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_type_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Type(()))
     }
 
-    pub(crate) fn decode_import_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_import_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Import(()))
     }
 
-    pub(crate) fn decode_function_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_function_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Function(()))
     }
 
-    pub(crate) fn decode_table_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_table_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Table(()))
     }
 
-    pub(crate) fn decode_memory_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_memory_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Memory(()))
     }
 
-    pub(crate) fn decode_global_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_global_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Global(()))
     }
 
-    pub(crate) fn decode_export_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_export_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Export(()))
     }
 
-    pub(crate) fn decode_start_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_start_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Start(()))
     }
 
-    pub(crate) fn decode_element_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_element_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Element(()))
     }
 
-    pub(crate) fn decode_code_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_code_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Code(()))
     }
 
-    pub(crate) fn decode_data_section(&mut self, size: u8) -> Result<Section, DecodeError> {
+    pub(crate) fn decode_data_section(&mut self, size: u32) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
 
         Ok(Section::Data(()))
+    }
+
+    fn decode_ver_uint_n(&mut self) -> Result<VerUintN, DecodeError> {
+        let mut value = 0;
+        let mut i = 0;
+        loop {
+            let bytes = u32::from(self.read_next()?);
+            value += (bytes & 0x7f)
+                .checked_shl(i * 7)
+                .ok_or(DecodeError::InvalidNumeric)?;
+
+            i += 1;
+
+            if bytes & 0x80 == 0 {
+                break;
+            }
+        }
+        Ok(VerUintN::from(value))
+    }
+
+    fn read_next(&mut self) -> Result<u8, DecodeError> {
+        let mut buf = [0; 1];
+        self.reader.read(&mut buf)?;
+
+        Ok(buf[0])
     }
 }
