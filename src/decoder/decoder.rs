@@ -50,6 +50,30 @@ impl<'a> Decoder<'a> {
         Ok((section_type, section_size))
     }
 
+    pub(crate) fn decode_section(
+        &mut self,
+        section_type: SectionType,
+        section_size: u8,
+    ) -> Result<Section, DecodeError> {
+        let section = match section_type {
+            SectionType::Custom => self.decode_custom_section(section_size)?,
+            SectionType::Type => self.decode_type_section(section_size)?,
+            SectionType::Import => self.decode_import_section(section_size)?,
+            SectionType::Function => self.decode_function_section(section_size)?,
+            SectionType::Table => self.decode_table_section(section_size)?,
+            SectionType::Memory => self.decode_memory_section(section_size)?,
+            SectionType::Global => self.decode_global_section(section_size)?,
+            SectionType::Export => self.decode_export_section(section_size)?,
+            SectionType::Start => self.decode_start_section(section_size)?,
+            SectionType::Element => self.decode_element_section(section_size)?,
+            SectionType::Code => self.decode_code_section(section_size)?,
+            SectionType::Data => self.decode_data_section(section_size)?,
+            SectionType::Unsuport => todo!(),
+        };
+
+        Ok(section)
+    }
+
     pub(crate) fn decode_custom_section(&mut self, size: u8) -> Result<Section, DecodeError> {
         let mut custom_section = vec![0; size as usize];
         self.reader.read_exact(&mut custom_section)?;
