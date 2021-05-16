@@ -29,34 +29,41 @@ impl From<std::io::Error> for DecodeError {
     }
 }
 
+struct Decoder<'a> {
+    reader: Cursor<&'a [u8]>,
+}
+
 /// wasmバイナリをデコードしてwasm moduleを返す
 pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
-    let mut cursor = Cursor::new(buf);
+    let cursor = Cursor::new(buf);
+    let mut decoder = Decoder::new(cursor);
+
     let mut m = Module::default();
 
-    validate_wasm_format(&mut cursor)?;
-    m.version = decode_version(&mut cursor)?;
+    decoder.validate_wasm_format()?;
+    m.version = decoder.decode_version()?;
 
     loop {
-        if cursor.position() >= buf.len() as u64 {
+        if decoder.is_end() {
             break;
         }
-        let (section_type, section_size) = decode_section_type(&mut cursor)?;
+
+        let (section_type, section_size) = decoder.decode_section_type()?;
         println!("{:?}, {}", section_type, section_size);
 
         let section = match section_type {
-            SectionType::Custom => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Type => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Import => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Function => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Table => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Memory => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Global => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Export => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Start => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Element => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Code => decode_custom_section(section_size, &mut cursor)?,
-            SectionType::Data => decode_custom_section(section_size, &mut cursor)?,
+            SectionType::Custom => decoder.decode_custom_section(section_size)?,
+            SectionType::Type => decoder.decode_custom_section(section_size)?,
+            SectionType::Import => decoder.decode_custom_section(section_size)?,
+            SectionType::Function => decoder.decode_custom_section(section_size)?,
+            SectionType::Table => decoder.decode_custom_section(section_size)?,
+            SectionType::Memory => decoder.decode_custom_section(section_size)?,
+            SectionType::Global => decoder.decode_custom_section(section_size)?,
+            SectionType::Export => decoder.decode_custom_section(section_size)?,
+            SectionType::Start => decoder.decode_custom_section(section_size)?,
+            SectionType::Element => decoder.decode_custom_section(section_size)?,
+            SectionType::Code => decoder.decode_custom_section(section_size)?,
+            SectionType::Data => decoder.decode_custom_section(section_size)?,
             SectionType::Unsuport => (),
         };
 
@@ -66,41 +73,51 @@ pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
     Ok(m)
 }
 
-/// wasmバイナリのマジックナンバーを見て適切なファイルか(本当にwasmか)をチェックする
-fn validate_wasm_format(mut reader: impl Read) -> Result<(), DecodeError> {
-    let mut magic_number = [0; 4];
-    reader.read_exact(&mut magic_number)?;
-
-    if &magic_number != MAGIC_NUMBER {
-        return Err(DecodeError::InvalidWasmFile);
+impl<'a> Decoder<'a> {
+    fn new(reader: Cursor<&'a [u8]>) -> Self {
+        Self { reader }
     }
 
-    Ok(())
-}
+    fn is_end(&self) -> bool {
+        self.reader.position() == self.reader.get_ref().len() as u64
+    }
 
-fn decode_version(mut reader: impl Read) -> Result<u32, DecodeError> {
-    let mut version = [0; 4];
-    reader.read_exact(&mut version)?;
+    /// wasmバイナリのマジックナンバーを見て適切なファイルか(本当にwasmか)をチェックする
+    fn validate_wasm_format(&mut self) -> Result<(), DecodeError> {
+        let mut magic_number = [0; 4];
+        self.reader.read_exact(&mut magic_number)?;
 
-    Ok(u32::from_le_bytes(version))
-}
+        if &magic_number != MAGIC_NUMBER {
+            return Err(DecodeError::InvalidWasmFile);
+        }
 
-fn decode_section_type(mut reader: impl Read) -> Result<(SectionType, u8), DecodeError> {
-    let mut section_number = [0; 1];
-    reader.read_exact(&mut section_number)?;
+        Ok(())
+    }
 
-    let mut section_size = [0; 1];
-    reader.read_exact(&mut section_size)?;
-    let section_size = section_size[0];
+    fn decode_version(&mut self) -> Result<u32, DecodeError> {
+        let mut version = [0; 4];
+        self.reader.read_exact(&mut version)?;
 
-    let section_type = SectionType::from(section_number[0]);
+        Ok(u32::from_le_bytes(version))
+    }
 
-    Ok((section_type, section_size))
-}
+    fn decode_section_type(&mut self) -> Result<(SectionType, u8), DecodeError> {
+        let mut section_number = [0; 1];
+        self.reader.read_exact(&mut section_number)?;
 
-fn decode_custom_section(size: u8, mut reader: impl Read) -> Result<(), DecodeError> {
-    let mut custom_section = vec![0; size as usize];
-    reader.read_exact(&mut custom_section)?;
+        let mut section_size = [0; 1];
+        self.reader.read_exact(&mut section_size)?;
+        let section_size = section_size[0];
 
-    Ok(())
+        let section_type = SectionType::from(section_number[0]);
+
+        Ok((section_type, section_size))
+    }
+
+    fn decode_custom_section(&mut self, size: u8) -> Result<(), DecodeError> {
+        let mut custom_section = vec![0; size as usize];
+        self.reader.read_exact(&mut custom_section)?;
+
+        Ok(())
+    }
 }
