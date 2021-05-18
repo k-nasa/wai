@@ -1,5 +1,5 @@
 [package]
-name = "wasm_interpreter"
+name = "wasmi"
 version = "0.1.0"
 edition = "2018"
 

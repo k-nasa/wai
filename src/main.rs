@@ -1,4 +1,4 @@
-use wasm_interpreter::*;
+use wasmi::*;
 
 fn main() -> anyhow::Result<()> {
     let args: Vec<String> = std::env::args().collect();
