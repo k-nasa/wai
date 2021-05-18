@@ -237,7 +237,7 @@ impl<'a> Decoder<'a> {
                 function_body.locales.push(local_entry);
             }
 
-            function_body.code = body.read_to_end()?;
+            // function_body.code = body.read_to_end()?;
 
             code_section.bodies.push(function_body);
         }
