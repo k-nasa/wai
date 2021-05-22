@@ -39,21 +39,33 @@ impl From<u32> for VerUintN {
     }
 }
 
-impl Into<u32> for VerUintN {
-    fn into(self) -> u32 {
-        self.0
+impl From<i32> for VerUintN {
+    fn from(x: i32) -> Self {
+        VerUintN(x as u32)
     }
 }
 
-impl Into<i32> for VerUintN {
-    fn into(self) -> i32 {
-        self.0 as i32
+impl From<usize> for VerUintN {
+    fn from(x: usize) -> Self {
+        VerUintN(x as u32)
     }
 }
 
-impl Into<usize> for VerUintN {
-    fn into(self) -> usize {
-        self.0 as usize
+impl From<VerUintN> for u32 {
+    fn from(x: VerUintN) -> u32 {
+        x.0
+    }
+}
+
+impl From<VerUintN> for i32 {
+    fn from(x: VerUintN) -> i32 {
+        x.0 as i32
+    }
+}
+
+impl From<VerUintN> for usize {
+    fn from(x: VerUintN) -> usize {
+        x.0 as usize
     }
 }
 
