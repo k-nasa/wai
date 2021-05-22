@@ -1,4 +1,4 @@
-use crate::decoder::error::DecodeError;
+use crate::decode::error::DecodeError;
 use crate::module::{Section, SectionType};
 use crate::opcode::Opcode;
 use crate::types::*;

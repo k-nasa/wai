@@ -1,4 +1,4 @@
-use crate::decoder;
+use crate::decode;
 use crate::types::*;
 
 #[derive(Debug)]
@@ -39,8 +39,8 @@ impl Default for Module {
 }
 
 impl Module {
-    pub fn from_byte(byte: impl AsRef<[u8]>) -> Result<Self, decoder::DecodeError> {
-        decoder::decode(byte.as_ref())
+    pub fn from_byte(byte: impl AsRef<[u8]>) -> Result<Self, decode::DecodeError> {
+        decode::decode(byte.as_ref())
     }
 
     // TODO refactor, section_typeとsectionの両方を取る必要はない

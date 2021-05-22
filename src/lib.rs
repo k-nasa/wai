@@ -1,4 +1,4 @@
-mod decoder;
+mod decode;
 mod instance;
 mod module;
 mod opcode;
