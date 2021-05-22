@@ -1,5 +1,6 @@
 use crate::decoder::error::DecodeError;
 use crate::module::{Section, SectionType};
+use crate::opcode::Opcode;
 use crate::types::*;
 use std::io::Cursor;
 use std::io::Read;
@@ -237,8 +238,7 @@ impl<'a> Decoder<'a> {
                 function_body.locales.push(local_entry);
             }
 
-            // function_body.code = body.read_to_end()?;
-
+            function_body.code = body.decode_function_body()?;
             code_section.bodies.push(function_body);
         }
 
@@ -268,6 +268,68 @@ impl<'a> Decoder<'a> {
             }
         }
         Ok(VerUintN::from(value))
+    }
+
+    fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
+        let mut instructions = Vec::new();
+        loop {
+            let opcode = Opcode::from(self.read_next()?);
+            if opcode == Opcode::End {
+                break;
+            }
+
+            let operands = match opcode {
+                Opcode::Block | Opcode::Loop | Opcode::If => {
+                    let block_type = BlockType::from(self.read_next()?);
+                    vec![Operand::BlockType(block_type)]
+                }
+                Opcode::Br
+                | Opcode::BrIf
+                | Opcode::GetLocal
+                | Opcode::SetLocal
+                | Opcode::TeeLocal
+                | Opcode::GetGlobal
+                | Opcode::SetGlobal
+                | Opcode::Call => {
+                    let ver_uint = self.decode_ver_uint_n()?;
+                    vec![Operand::VerUintN(ver_uint)]
+                }
+                Opcode::BrTable => todo!(),
+                Opcode::CallIndirect => todo!(),
+                Opcode::I32Load
+                | Opcode::I64Load
+                | Opcode::F32Load
+                | Opcode::F64Load
+                | Opcode::I32Load8S
+                | Opcode::I32Load8U
+                | Opcode::I32Load16S
+                | Opcode::I32Load16U
+                | Opcode::I64Load8S
+                | Opcode::I64Load8U
+                | Opcode::I64Load16S
+                | Opcode::I64Load16U
+                | Opcode::I64Load32S
+                | Opcode::I64Load32U
+                | Opcode::I32Store
+                | Opcode::I64Store
+                | Opcode::F32Store
+                | Opcode::F64Store
+                | Opcode::I32Store8
+                | Opcode::I32Store16
+                | Opcode::I64Store8
+                | Opcode::I64Store16
+                | Opcode::I64Store32 => todo!(),
+                Opcode::CurrentMemory | Opcode::GrowMemory => {
+                    let ver_uint = self.decode_ver_uint_n()?;
+                    vec![Operand::VerUintN(ver_uint)]
+                }
+                _ => vec![],
+            };
+
+            instructions.push((opcode, operands));
+        }
+
+        Ok(instructions)
     }
 
     fn read_next(&mut self) -> Result<u8, DecodeError> {

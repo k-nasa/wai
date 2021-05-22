@@ -30,6 +30,7 @@ impl From<VerUintN> for ValueType {
     }
 }
 
+#[derive(Clone, Debug, PartialEq)]
 pub struct VerUintN(u32);
 
 impl From<u32> for VerUintN {
@@ -53,6 +54,31 @@ impl Into<i32> for VerUintN {
 impl Into<usize> for VerUintN {
     fn into(self) -> usize {
         self.0 as usize
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum BlockType {
+    I32,
+    I64,
+    F32,
+    F64,
+    Empty,
+    Unknown,
+}
+
+impl From<u8> for BlockType {
+    fn from(x: u8) -> Self {
+        use BlockType::*;
+
+        match x {
+            0x7f => I32,
+            0x02 => I64,
+            0x03 => F32,
+            0x04 => F64,
+            0x40 => Empty,
+            _ => Unknown,
+        }
     }
 }
 
@@ -115,11 +141,20 @@ pub struct CodeSection {
 #[derive(Clone, Debug, PartialEq)]
 pub struct FunctionBody {
     pub(crate) locales: Vec<LocalEntry>,
-    pub(crate) code: Vec<Opcode>,
+    pub(crate) code: Vec<Instruction>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocalEntry {
     pub(crate) count: u32,
     pub(crate) value_type: ValueType,
+}
+
+pub type Instruction = (Opcode, Operands);
+pub type Operands = Vec<Operand>;
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum Operand {
+    BlockType(BlockType),
+    VerUintN(VerUintN),
 }
