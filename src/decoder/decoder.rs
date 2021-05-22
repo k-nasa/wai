@@ -334,14 +334,14 @@ impl<'a> Decoder<'a> {
 
     fn read_next(&mut self) -> Result<u8, DecodeError> {
         let mut buf = [0; 1];
-        self.reader.read(&mut buf)?;
+        self.reader.read_exact(&mut buf)?;
 
         Ok(buf[0])
     }
 
     fn read_byte(&mut self, size: usize) -> Result<Vec<u8>, DecodeError> {
         let mut buf = vec![0; size];
-        self.reader.read(&mut buf)?;
+        self.reader.read_exact(&mut buf)?;
 
         Ok(buf)
     }
