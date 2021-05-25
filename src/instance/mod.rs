@@ -12,11 +12,21 @@ impl Instance {
 
     pub fn invoke(&self, name: impl AsRef<str>) -> Result<(), RuntimeError> {
         let index = self.resolve_function_name(name.as_ref());
+        let index = match index {
+            None => return Err(RuntimeError::NotFound(name.as_ref().to_string())),
+            Some(i) => i,
+        };
 
-        if index.is_none() {
-            return Err(RuntimeError::NotFound(name.as_ref().to_string()));
-        }
+        let instractions = &self
+            .module
+            .code_section
+            .as_ref()
+            .unwrap()
+            .bodies
+            .get(index)
+            .unwrap();
 
+        dbg!(instractions);
         todo!()
     }
 
