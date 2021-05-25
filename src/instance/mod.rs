@@ -11,14 +11,21 @@ impl Instance {
         Self { module }
     }
 
-    pub fn invoke(&self, name: impl AsRef<str>) -> Result<Vec<RuntimeValue>, RuntimeError> {
+    pub fn invoke(
+        &self,
+        name: impl AsRef<str>,
+        args: Vec<RuntimeValue>,
+    ) -> Result<Vec<RuntimeValue>, RuntimeError> {
         let index = self.resolve_function_name(name.as_ref());
         let index = match index {
             None => return Err(RuntimeError::NotFound(name.as_ref().to_string())),
             Some(i) => i,
         };
 
+        let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
+        // validate(func_type, args)?; argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
+
         dbg!(func);
         Ok(vec![])
     }
@@ -44,6 +51,10 @@ impl Instance {
         let function = code_section.unwrap().bodies.get(index).unwrap();
 
         return Ok(function);
+    }
+
+    fn get_func_type(&self, _index: usize) -> Result<&FuncType, RuntimeError> {
+        todo!()
     }
 }
 
