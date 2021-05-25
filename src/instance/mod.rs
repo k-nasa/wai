@@ -24,10 +24,14 @@ impl Instance {
 
         let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
-        // validate(func_type, args)?; argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
+
+        let mut stack = vec![];
+
+        Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
+        Instance::execute(func, &args, &mut stack)?;
 
         dbg!(func);
-        Ok(vec![])
+        Ok(stack)
     }
 
     fn resolve_function_name(&self, name: impl AsRef<str>) -> Option<usize> {
@@ -54,6 +58,18 @@ impl Instance {
     }
 
     fn get_func_type(&self, _index: usize) -> Result<&FuncType, RuntimeError> {
+        todo!()
+    }
+
+    fn validate(_func_type: &FuncType, _args: &[RuntimeValue]) -> Result<(), RuntimeError> {
+        todo!()
+    }
+
+    fn execute(
+        _func: &FunctionBody,
+        _args: &[RuntimeValue],
+        _stack: &mut Vec<RuntimeValue>,
+    ) -> Result<(), RuntimeError> {
         todo!()
     }
 }
