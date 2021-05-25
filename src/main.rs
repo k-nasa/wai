@@ -11,8 +11,10 @@ fn main() -> anyhow::Result<()> {
 
     let m = Module::from_byte(bytes)?;
     dbg!(&m);
+
     let instance = Instance::new(m);
-    instance.invoke("add")?;
+    let values = instance.invoke("add")?;
+    dbg!(values);
 
     Ok(())
 }

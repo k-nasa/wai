@@ -1,6 +1,14 @@
 use crate::opcode::Opcode;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub enum RuntimeValue {
+    I32(i32),
+    I64(i64),
+    F32(f32),
+    F64(f64),
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum ValueType {
     I32,
     I64,
