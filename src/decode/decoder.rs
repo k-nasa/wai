@@ -227,6 +227,7 @@ impl<'a> Decoder<'a> {
                 code: Vec::new(),
             };
 
+            dbg!(&local_count);
             for _ in 0..local_count.into() {
                 let count = body.decode_ver_uint_n()?;
                 let t = body.decode_ver_uint_n()?;
