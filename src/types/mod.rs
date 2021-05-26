@@ -8,8 +8,21 @@ pub enum RuntimeValue {
     F64(f64),
 }
 
+impl RuntimeValue {
+    pub fn to_type(&self) -> ValueType {
+        use RuntimeValue::*;
+
+        match self {
+            I32(_) => ValueType::I32,
+            I64(_) => ValueType::I64,
+            F32(_) => ValueType::F32,
+            F64(_) => ValueType::F64,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) enum ValueType {
+pub enum ValueType {
     I32,
     I64,
     F32,
