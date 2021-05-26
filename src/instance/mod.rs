@@ -79,11 +79,26 @@ impl Instance {
     }
 
     fn execute(
-        _func: &FunctionBody,
-        _args: &[RuntimeValue],
-        _stack: &mut Vec<RuntimeValue>,
+        func: &FunctionBody,
+        args: &[RuntimeValue],
+        stack: &mut Vec<RuntimeValue>,
     ) -> Result<(), RuntimeError> {
-        // TODO implement
+        // NOTE func にlocalesがある場合がある。このケースも考える必要がありそう
+        let mut locals = args.clone().to_vec();
+        let instractions = &func.code;
+
+        for instraction in instractions {
+            match instraction.0 {
+                Opcode::GetLocal => stack.push(locals.pop().unwrap()),
+                Opcode::I32Add => {
+                    let a = stack.pop().unwrap();
+                    let b = stack.pop().unwrap();
+
+                    stack.push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
+                }
+                _ => todo!(),
+            }
+        }
         Ok(())
     }
 }
