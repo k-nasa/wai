@@ -67,8 +67,14 @@ impl Instance {
         return Ok(types);
     }
 
-    fn validate(_func_type: &FuncType, _args: &[RuntimeValue]) -> Result<(), RuntimeError> {
-        // TODO implement 一旦validなfuncしかないと仮定して実装を進める
+    fn validate(func_type: &FuncType, args: &[RuntimeValue]) -> Result<(), RuntimeError> {
+        let args_types: Vec<_> = args.iter().map(RuntimeValue::to_type).collect();
+
+        let expect = func_type.params.clone();
+        if expect != args_types {
+            return Err(RuntimeError::InvalidArgs(expect, args_types));
+        }
+
         Ok(())
     }
 
@@ -89,6 +95,7 @@ use std::fmt::{self, Display};
 pub enum RuntimeError {
     NotFound(String),
     ExpectCodeSection,
+    InvalidArgs(Vec<ValueType>, Vec<ValueType>),
     IOError(std::io::Error),
 }
 
@@ -98,6 +105,11 @@ impl Display for RuntimeError {
         use self::RuntimeError::*;
         match self {
             NotFound(name) => write!(f, "'{}'' is not found", name),
+            InvalidArgs(expect, actual) => write!(
+                f,
+                "Invalid argument: expect {:?},but got {:?}",
+                expect, actual
+            ),
             ExpectCodeSection => {
                 write!(f, "not found code section. wasmi is expected code section")
             }

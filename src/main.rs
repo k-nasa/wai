@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
     dbg!(&m);
 
     let instance = Instance::new(m);
-    let values = instance.invoke("add", vec![])?;
+    let values = instance.invoke("add", vec![RuntimeValue::I32(1), RuntimeValue::I32(1)])?;
     dbg!(values);
 
     Ok(())
