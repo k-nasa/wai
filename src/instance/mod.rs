@@ -25,12 +25,11 @@ impl Instance {
         let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
 
-        let mut stack = vec![];
+        let mut stack = vec![RuntimeValue::I32(43)];
 
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         Instance::execute(func, &args, &mut stack)?;
 
-        dbg!(func);
         Ok(stack)
     }
 
@@ -62,7 +61,8 @@ impl Instance {
     }
 
     fn validate(_func_type: &FuncType, _args: &[RuntimeValue]) -> Result<(), RuntimeError> {
-        todo!()
+        // TODO implement 一旦validなfuncしかないと仮定して実装を進める
+        Ok(())
     }
 
     fn execute(
@@ -70,7 +70,8 @@ impl Instance {
         _args: &[RuntimeValue],
         _stack: &mut Vec<RuntimeValue>,
     ) -> Result<(), RuntimeError> {
-        todo!()
+        Ok(())
+        // todo!()
     }
 }
 
