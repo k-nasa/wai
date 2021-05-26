@@ -22,7 +22,6 @@ pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
         }
 
         let (section_type, section_size) = decoder.decode_section_type()?;
-        dbg!((section_type, section_size));
         let section = decoder.decode_section(section_type, section_size)?;
 
         m.take_in(section);

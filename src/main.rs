@@ -10,11 +10,10 @@ fn main() -> anyhow::Result<()> {
     let bytes = std::fs::read(filename)?;
 
     let m = Module::from_byte(bytes)?;
-    dbg!(&m);
 
     let instance = Instance::new(m);
     let values = instance.invoke("add", vec![RuntimeValue::I32(1), RuntimeValue::I32(1)])?;
-    dbg!(values);
+    println!("return value is {:?}", values);
 
     Ok(())
 }

@@ -24,9 +24,8 @@ impl Instance {
 
         let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
-        dbg!(func_type, func, &args);
 
-        let mut stack = vec![RuntimeValue::I32(43)];
+        let mut stack = vec![];
 
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         Instance::execute(func, &args, &mut stack)?;
