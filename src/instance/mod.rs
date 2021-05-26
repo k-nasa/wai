@@ -1,4 +1,5 @@
 use crate::module::Module;
+use crate::opcode::Opcode;
 use crate::types::*;
 
 #[derive(Debug)]
