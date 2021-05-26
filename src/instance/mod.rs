@@ -54,7 +54,7 @@ impl Instance {
         }
         let function = code_section.unwrap().bodies.get(index).unwrap();
 
-        return Ok(function);
+        Ok(function)
     }
 
     fn get_func_type(&self, index: usize) -> Result<&FuncType, RuntimeError> {
@@ -64,7 +64,7 @@ impl Instance {
         }
         let types = type_section.unwrap().entries.get(index).unwrap();
 
-        return Ok(types);
+        Ok(types)
     }
 
     fn validate(func_type: &FuncType, args: &[RuntimeValue]) -> Result<(), RuntimeError> {
@@ -83,8 +83,8 @@ impl Instance {
         _args: &[RuntimeValue],
         _stack: &mut Vec<RuntimeValue>,
     ) -> Result<(), RuntimeError> {
+        // TODO implement
         Ok(())
-        // todo!()
     }
 }
 
