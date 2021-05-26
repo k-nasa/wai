@@ -44,7 +44,7 @@ impl Instance {
 
         let entry = exports.iter().find(|x| &x.field_str == name.as_ref());
 
-        entry.and_then(|x| Some(x.index as usize))
+        entry.map(|x| x.index as usize)
     }
 
     fn get_function(&self, index: usize) -> Result<&FunctionBody, RuntimeError> {
