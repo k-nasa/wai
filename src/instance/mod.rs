@@ -42,7 +42,7 @@ impl Instance {
             Some(e) => &e.entries,
         };
 
-        let entry = exports.iter().find(|x| &x.field_str == name.as_ref());
+        let entry = exports.iter().find(|x| x.field_str == name.as_ref());
 
         entry.map(|x| x.index as usize)
     }
