@@ -24,6 +24,7 @@ impl Instance {
 
         let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
+        dbg!(func_type, func, &args);
 
         let mut stack = vec![RuntimeValue::I32(43)];
 
@@ -56,8 +57,14 @@ impl Instance {
         return Ok(function);
     }
 
-    fn get_func_type(&self, _index: usize) -> Result<&FuncType, RuntimeError> {
-        todo!()
+    fn get_func_type(&self, index: usize) -> Result<&FuncType, RuntimeError> {
+        let type_section = &self.module.type_section.as_ref();
+        if type_section.is_none() {
+            return Err(RuntimeError::ExpectCodeSection); // fix error type
+        }
+        let types = type_section.unwrap().entries.get(index).unwrap();
+
+        return Ok(types);
     }
 
     fn validate(_func_type: &FuncType, _args: &[RuntimeValue]) -> Result<(), RuntimeError> {
