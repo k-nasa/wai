@@ -21,6 +21,18 @@ impl RuntimeValue {
     }
 }
 
+impl From<RuntimeValue> for i32 {
+    fn from(v: RuntimeValue) -> i32 {
+        use RuntimeValue::*;
+        match v {
+            I32(x) => x as i32,
+            I64(x) => x as i32,
+            F32(x) => x as i32,
+            F64(x) => x as i32,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ValueType {
     I32,
