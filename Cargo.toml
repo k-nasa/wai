@@ -2,6 +2,10 @@
 name = "wasmi"
 version = "0.1.0"
 edition = "2018"
+authors = ["k-nasa <htilcs1115@gmail.com>"]
+description = "A simple wasm interpreter"
+repository = "https://github.com/k-nasa/wasmi"
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
