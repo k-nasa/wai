@@ -33,6 +33,18 @@ impl From<RuntimeValue> for i32 {
     }
 }
 
+impl From<RuntimeValue> for usize {
+    fn from(v: RuntimeValue) -> usize {
+        use RuntimeValue::*;
+        match v {
+            I32(x) => x as usize,
+            I64(x) => x as usize,
+            F32(x) => x as usize,
+            F64(x) => x as usize,
+        }
+    }
+}
+
 impl From<RuntimeValue> for bool {
     fn from(v: RuntimeValue) -> bool {
         use RuntimeValue::*;
@@ -75,7 +87,7 @@ impl From<VerUintN> for ValueType {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct VerUintN(u32);
 
 impl From<u32> for VerUintN {
@@ -233,6 +245,18 @@ impl From<Val> for RuntimeValue {
             I64(x) => RuntimeValue::I64(x),
             F32(x) => RuntimeValue::F32(x),
             F64(x) => RuntimeValue::F64(x),
+        }
+    }
+}
+
+impl From<Val> for usize {
+    fn from(v: Val) -> usize {
+        use Val::*;
+        match v {
+            I32(x) => x as usize,
+            I64(x) => x as usize,
+            F32(x) => x as usize,
+            F64(x) => x as usize,
         }
     }
 }

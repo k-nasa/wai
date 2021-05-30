@@ -100,6 +100,15 @@ impl Instance {
             match instruction.0 {
                 Opcode::Nop => {}
                 Opcode::GetLocal => value_stack.push(locals.pop().unwrap()),
+                Opcode::SetLocal => {
+                    let i = match instruction.1[0] {
+                        Operand::Val(v) => usize::from(v),
+                        Operand::VerUintN(v) => usize::from(v),
+                        _ => todo!(),
+                    };
+                    let v = value_stack.pop().unwrap();
+                    locals.insert(i, v);
+                }
                 Opcode::I32Add => {
                     let a = value_stack.pop().unwrap();
                     let b = value_stack.pop().unwrap();
