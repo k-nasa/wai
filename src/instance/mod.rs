@@ -96,7 +96,14 @@ impl Instance {
 
                     stack.push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
                 }
-                _ => todo!(),
+                Opcode::If => {}
+                Opcode::Unexpected(op) => {
+                    return Err(RuntimeError::Custom(format!(
+                        "unexpected opcode: {:0x}",
+                        op
+                    )))
+                }
+                _ => {}
             }
         }
         Ok(())
@@ -112,6 +119,7 @@ pub enum RuntimeError {
     ExpectCodeSection,
     InvalidArgs(Vec<ValueType>, Vec<ValueType>),
     IOError(std::io::Error),
+    Custom(String),
 }
 
 impl Error for RuntimeError {}
@@ -129,6 +137,7 @@ impl Display for RuntimeError {
                 write!(f, "not found code section. wasmi is expected code section")
             }
             IOError(i) => write!(f, "io error: {}", i),
+            Custom(s) => write!(f, "{}", s),
         }
     }
 }

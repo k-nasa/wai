@@ -1,6 +1,6 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Opcode {
-    Unexpected,
+    Unexpected(u8),
     Nop,
     Block,
     Loop,
@@ -350,7 +350,7 @@ impl From<u8> for Opcode {
             0xBD => I64ReinterpretF64,
             0xBE => F32ReinterpretI32,
             0xBF => F64ReinterpretI64,
-            _ => Unexpected,
+            _ => Unexpected(x),
         }
     }
 }

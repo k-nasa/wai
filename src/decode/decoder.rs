@@ -323,6 +323,10 @@ impl<'a> Decoder<'a> {
                     let ver_uint = self.decode_ver_uint_n()?;
                     vec![Operand::VerUintN(ver_uint)]
                 }
+                Opcode::I32Const => {
+                    let v = self.decode_ver_uint_n()?;
+                    vec![Operand::Val(Val::I32(i32::from(v)))]
+                }
                 _ => vec![],
             };
 
