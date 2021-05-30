@@ -7,6 +7,8 @@ pub struct Instance {
     module: Module,
 }
 
+type ValueStack = Vec<RuntimeValue>;
+
 impl Instance {
     pub fn new(module: Module) -> Self {
         Self { module }
@@ -16,7 +18,7 @@ impl Instance {
         &self,
         name: impl AsRef<str>,
         args: Vec<RuntimeValue>,
-    ) -> Result<Vec<RuntimeValue>, RuntimeError> {
+    ) -> Result<ValueStack, RuntimeError> {
         let index = self.resolve_function_name(name.as_ref());
         let index = match index {
             None => return Err(RuntimeError::NotFound(name.as_ref().to_string())),
@@ -26,10 +28,8 @@ impl Instance {
         let func_type = self.get_func_type(index)?;
         let func = self.get_function(index)?;
 
-        let mut stack = vec![];
-
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
-        Instance::execute(func, &args, &mut stack)?;
+        let stack = Instance::execute(func, &args)?;
 
         Ok(stack)
     }
@@ -78,13 +78,10 @@ impl Instance {
         Ok(())
     }
 
-    fn execute(
-        func: &FunctionBody,
-        args: &[RuntimeValue],
-        stack: &mut Vec<RuntimeValue>,
-    ) -> Result<(), RuntimeError> {
+    fn execute(func: &FunctionBody, args: &[RuntimeValue]) -> Result<ValueStack, RuntimeError> {
         // NOTE func にlocalesがある場合がある。このケースも考える必要がありそう
         let mut locals = args.clone().to_vec();
+        let mut stack = Vec::new();
         let instractions = &func.code;
 
         for instraction in instractions {
@@ -106,7 +103,7 @@ impl Instance {
                 _ => {}
             }
         }
-        Ok(())
+        Ok(stack)
     }
 }
 

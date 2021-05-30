@@ -274,7 +274,7 @@ impl<'a> Decoder<'a> {
         let mut instructions = Vec::new();
         loop {
             let opcode = Opcode::from(self.read_next()?);
-            if opcode == Opcode::End {
+            if self.is_end() {
                 break;
             }
 
