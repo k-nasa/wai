@@ -33,6 +33,18 @@ impl From<RuntimeValue> for i32 {
     }
 }
 
+impl From<RuntimeValue> for bool {
+    fn from(v: RuntimeValue) -> bool {
+        use RuntimeValue::*;
+        match v {
+            I32(x) => x as u32 != 0,
+            I64(x) => x as u32 != 0,
+            F32(x) => x as u32 != 0,
+            F64(x) => x as u32 != 0,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ValueType {
     I32,
@@ -205,10 +217,22 @@ pub enum Operand {
     Val(Val),
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Val {
     I32(i32),
     I64(i64),
     F32(f32),
     F64(f64),
+}
+
+impl From<Val> for RuntimeValue {
+    fn from(v: Val) -> RuntimeValue {
+        use Val::*;
+        match v {
+            I32(x) => RuntimeValue::I32(x),
+            I64(x) => RuntimeValue::I64(x),
+            F32(x) => RuntimeValue::F32(x),
+            F64(x) => RuntimeValue::F64(x),
+        }
+    }
 }

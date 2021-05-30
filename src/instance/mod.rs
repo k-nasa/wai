@@ -79,21 +79,56 @@ impl Instance {
     }
 
     fn execute(func: &FunctionBody, args: &[RuntimeValue]) -> Result<ValueStack, RuntimeError> {
-        // NOTE func にlocalesがある場合がある。このケースも考える必要がありそう
         let mut locals = args.clone().to_vec();
-        let mut stack = Vec::new();
-        let instractions = &func.code;
 
-        for instraction in instractions {
-            match instraction.0 {
-                Opcode::GetLocal => stack.push(locals.pop().unwrap()),
-                Opcode::I32Add => {
-                    let a = stack.pop().unwrap();
-                    let b = stack.pop().unwrap();
+        let mut value_stack = Vec::new();
+        // let mut label_stack: Vec<u8> = Vec::new();
+        // let mut activation_stack: Vec<u8> = Vec::new();
+        let mut skip_else_or_end = false;
 
-                    stack.push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
+        let instructions = &func.code;
+
+        for instruction in instructions {
+            // TODO flagじゃなくてlabelでいい感じにしたい
+            if skip_else_or_end {
+                // TODO support else
+
+                if instruction.0 == Opcode::Else {
+                    skip_else_or_end = false;
                 }
-                Opcode::If => {}
+            }
+            match instruction.0 {
+                Opcode::Nop => {}
+                Opcode::GetLocal => value_stack.push(locals.pop().unwrap()),
+                Opcode::I32Add => {
+                    let a = value_stack.pop().unwrap();
+                    let b = value_stack.pop().unwrap();
+
+                    value_stack.push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
+                }
+                Opcode::If => {
+                    if value_stack.is_empty() {
+                        return Err(RuntimeError::Custom(
+                            "value stack is empty, if is expected value".to_string(),
+                        ));
+                    }
+
+                    let condition = bool::from(value_stack.pop().unwrap());
+                    if condition {
+                    } else {
+                        skip_else_or_end = true;
+                    }
+                }
+                Opcode::End => {}
+                Opcode::I32Const => {
+                    let operand = &instruction.1[0];
+
+                    match operand {
+                        Operand::BlockType(_) => panic!(""),
+                        Operand::VerUintN(_) => panic!(""),
+                        Operand::Val(val) => value_stack.push(RuntimeValue::from(*val)),
+                    }
+                }
                 Opcode::Unexpected(op) => {
                     return Err(RuntimeError::Custom(format!(
                         "unexpected opcode: {:0x}",
@@ -103,7 +138,7 @@ impl Instance {
                 _ => {}
             }
         }
-        Ok(stack)
+        Ok(value_stack)
     }
 }
 
