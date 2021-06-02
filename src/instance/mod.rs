@@ -1,7 +1,6 @@
 use crate::instruction::Instruction;
-use crate::runtime::error::RuntimeError;
-
 use crate::module::Module;
+use crate::runtime::{error::RuntimeError, Runtime};
 use crate::types::*;
 
 #[derive(Debug)]
@@ -31,7 +30,9 @@ impl Instance {
         let func = self.get_function(index)?;
 
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
-        let stack = Instance::execute(func, &args)?;
+
+        let mut runtime = Runtime::new(func.code.clone());
+        let stack = runtime.execute(&args)?;
 
         Ok(stack)
     }
