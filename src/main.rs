@@ -30,7 +30,10 @@ fn main() -> anyhow::Result<()> {
     let instance = Instance::new(m);
 
     // TODO implement custom argument
-    let values = instance.invoke(opts.invoke, vec![RuntimeValue::I32(0)])?;
+    let values = instance.invoke(&opts.invoke, vec![RuntimeValue::I32(1)])?;
+    log::info!("return value is {:?}", values);
+
+    let values = instance.invoke(&opts.invoke, vec![RuntimeValue::I32(0)])?;
     log::info!("return value is {:?}", values);
 
     Ok(())

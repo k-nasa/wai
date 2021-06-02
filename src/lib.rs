@@ -1,5 +1,6 @@
 mod decode;
 mod instance;
+mod instruction;
 mod module;
 mod opcode;
 mod runtime;

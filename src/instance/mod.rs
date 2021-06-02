@@ -1,5 +1,5 @@
+use crate::instruction::Instruction;
 use crate::module::Module;
-use crate::opcode::Opcode;
 use crate::types::*;
 
 #[derive(Debug)]
@@ -93,29 +93,26 @@ impl Instance {
             if skip_else_or_end {
                 // TODO support else
 
-                if instruction.0 == Opcode::Else {
+                if *instruction == Instruction::Else || *instruction == Instruction::End {
                     skip_else_or_end = false;
                 }
+
+                continue;
             }
-            match instruction.0 {
-                Opcode::Nop => {}
-                Opcode::GetLocal => value_stack.push(locals.pop().unwrap()),
-                Opcode::SetLocal => {
-                    let i = match instruction.1[0] {
-                        Operand::Val(v) => usize::from(v),
-                        Operand::VerUintN(v) => usize::from(v),
-                        _ => todo!(),
-                    };
+            match instruction {
+                Instruction::Nop => {}
+                Instruction::GetLocal(_) => value_stack.push(locals.pop().unwrap()),
+                Instruction::SetLocal(i) => {
                     let v = value_stack.pop().unwrap();
-                    locals.insert(i, v);
+                    locals.insert(usize::from(*i), v);
                 }
-                Opcode::I32Add => {
+                Instruction::I32Add => {
                     let a = value_stack.pop().unwrap();
                     let b = value_stack.pop().unwrap();
 
                     value_stack.push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
                 }
-                Opcode::If => {
+                Instruction::If(_block_type) => {
                     if value_stack.is_empty() {
                         return Err(RuntimeError::Custom(
                             "value stack is empty, if is expected value".to_string(),
@@ -123,22 +120,15 @@ impl Instance {
                     }
 
                     let condition = bool::from(value_stack.pop().unwrap());
+                    dbg!(condition);
                     if condition {
                     } else {
                         skip_else_or_end = true;
                     }
                 }
-                Opcode::End => {}
-                Opcode::I32Const => {
-                    let operand = &instruction.1[0];
-
-                    match operand {
-                        Operand::BlockType(_) => panic!(""),
-                        Operand::VerUintN(_) => panic!(""),
-                        Operand::Val(val) => value_stack.push(RuntimeValue::from(*val)),
-                    }
-                }
-                Opcode::Unexpected(op) => {
+                Instruction::End => {}
+                Instruction::I32Const(i) => value_stack.push(RuntimeValue::I32(*i)),
+                Instruction::Unexpected(op) => {
                     return Err(RuntimeError::Custom(format!(
                         "unexpected opcode: {:0x}",
                         op

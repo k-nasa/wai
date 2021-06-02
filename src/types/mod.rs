@@ -1,4 +1,4 @@
-use crate::opcode::Opcode;
+use crate::instruction::Instruction;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RuntimeValue {
@@ -120,6 +120,24 @@ impl From<VerUintN> for i32 {
     }
 }
 
+impl From<VerUintN> for i64 {
+    fn from(x: VerUintN) -> i64 {
+        x.0 as i64
+    }
+}
+
+impl From<VerUintN> for f32 {
+    fn from(x: VerUintN) -> f32 {
+        x.0 as f32
+    }
+}
+
+impl From<VerUintN> for f64 {
+    fn from(x: VerUintN) -> f64 {
+        x.0 as f64
+    }
+}
+
 impl From<VerUintN> for usize {
     fn from(x: VerUintN) -> usize {
         x.0 as usize
@@ -217,16 +235,6 @@ pub struct FunctionBody {
 pub struct LocalEntry {
     pub(crate) count: u32,
     pub(crate) value_type: ValueType,
-}
-
-pub type Instruction = (Opcode, Operands);
-pub type Operands = Vec<Operand>;
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum Operand {
-    BlockType(BlockType),
-    VerUintN(VerUintN),
-    Val(Val),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

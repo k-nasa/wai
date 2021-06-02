@@ -1,4 +1,5 @@
 use crate::decode::error::DecodeError;
+use crate::instruction::Instruction;
 use crate::module::{Section, SectionType};
 use crate::opcode::Opcode;
 use crate::types::*;
@@ -278,24 +279,27 @@ impl<'a> Decoder<'a> {
                 break;
             }
 
-            let operands = match opcode {
-                Opcode::Block | Opcode::Loop | Opcode::If => {
-                    let block_type = BlockType::from(self.read_next()?);
-                    vec![Operand::BlockType(block_type)]
-                }
-                Opcode::Br
-                | Opcode::BrIf
-                | Opcode::GetLocal
-                | Opcode::SetLocal
-                | Opcode::TeeLocal
-                | Opcode::GetGlobal
-                | Opcode::SetGlobal
-                | Opcode::Call => {
-                    let ver_uint = self.decode_ver_uint_n()?;
-                    vec![Operand::VerUintN(ver_uint)]
-                }
+            let instruction = match opcode {
+                // expect BlockType
+                Opcode::Block => Instruction::Block(BlockType::from(self.read_next()?)),
+                Opcode::Loop => Instruction::Loop(BlockType::from(self.read_next()?)),
+                Opcode::If => Instruction::If(BlockType::from(self.read_next()?)),
+
+                // expect VerUintN
+                Opcode::Br => Instruction::Br(self.decode_ver_uint_n()?),
+                Opcode::BrIf => Instruction::BrIf(self.decode_ver_uint_n()?),
+                Opcode::GetLocal => Instruction::GetLocal(self.decode_ver_uint_n()?),
+                Opcode::SetLocal => Instruction::SetLocal(self.decode_ver_uint_n()?),
+                Opcode::TeeLocal => Instruction::TeeLocal(self.decode_ver_uint_n()?),
+                Opcode::GetGlobal => Instruction::GetGlobal(self.decode_ver_uint_n()?),
+                Opcode::SetGlobal => Instruction::SetGlobal(self.decode_ver_uint_n()?),
+                Opcode::Call => Instruction::Call(self.decode_ver_uint_n()?),
+                Opcode::CurrentMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
+                Opcode::GrowMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
+
                 Opcode::BrTable => todo!(),
                 Opcode::CallIndirect => todo!(),
+
                 Opcode::I32Load
                 | Opcode::I64Load
                 | Opcode::F32Load
@@ -319,18 +323,15 @@ impl<'a> Decoder<'a> {
                 | Opcode::I64Store8
                 | Opcode::I64Store16
                 | Opcode::I64Store32 => todo!(),
-                Opcode::CurrentMemory | Opcode::GrowMemory => {
-                    let ver_uint = self.decode_ver_uint_n()?;
-                    vec![Operand::VerUintN(ver_uint)]
-                }
-                Opcode::I32Const => {
-                    let v = self.decode_ver_uint_n()?;
-                    vec![Operand::Val(Val::I32(i32::from(v)))]
-                }
-                _ => vec![],
+
+                Opcode::I32Const => Instruction::I32Const(i32::from(self.decode_ver_uint_n()?)),
+                Opcode::I64Const => Instruction::I64Const(i64::from(self.decode_ver_uint_n()?)),
+                Opcode::F32Const => Instruction::F32Const(f32::from(self.decode_ver_uint_n()?)),
+                Opcode::F64Const => Instruction::F64Const(f64::from(self.decode_ver_uint_n()?)),
+                _ => Instruction::from(opcode),
             };
 
-            instructions.push((opcode, operands));
+            instructions.push(instruction);
         }
 
         Ok(instructions)
