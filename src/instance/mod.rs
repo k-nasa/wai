@@ -1,4 +1,3 @@
-use crate::instruction::Instruction;
 use crate::module::Module;
 use crate::runtime::{error::RuntimeError, Runtime};
 use crate::types::*;
