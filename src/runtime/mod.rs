@@ -27,7 +27,7 @@ impl Runtime {
     }
 
     pub fn execute(&mut self, args: &[RuntimeValue]) -> Result<ValueStack, RuntimeError> {
-        let mut locals = args.clone().to_vec();
+        let mut locals = Vec::from(args);
 
         // let mut label_stack: Vec<u8> = Vec::new();
         // let mut activation_stack: Vec<u8> = Vec::new();
