@@ -295,34 +295,103 @@ impl<'a> Decoder<'a> {
                 Opcode::SetGlobal => Instruction::SetGlobal(self.decode_ver_uint_n()?),
                 Opcode::Call => Instruction::Call(self.decode_ver_uint_n()?),
                 Opcode::CurrentMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
-                Opcode::GrowMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
+                Opcode::GrowMemory => Instruction::GrowMemory(self.decode_ver_uint_n()?),
 
                 Opcode::BrTable => todo!(),
                 Opcode::CallIndirect => todo!(),
 
-                Opcode::I32Load
-                | Opcode::I64Load
-                | Opcode::F32Load
-                | Opcode::F64Load
-                | Opcode::I32Load8S
-                | Opcode::I32Load8U
-                | Opcode::I32Load16S
-                | Opcode::I32Load16U
-                | Opcode::I64Load8S
-                | Opcode::I64Load8U
-                | Opcode::I64Load16S
-                | Opcode::I64Load16U
-                | Opcode::I64Load32S
-                | Opcode::I64Load32U
-                | Opcode::I32Store
-                | Opcode::I64Store
-                | Opcode::F32Store
-                | Opcode::F64Store
-                | Opcode::I32Store8
-                | Opcode::I32Store16
-                | Opcode::I64Store8
-                | Opcode::I64Store16
-                | Opcode::I64Store32 => todo!(),
+                Opcode::I32Load => Instruction::I32Load(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load => Instruction::I64Load(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::F32Load => Instruction::F32Load(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::F64Load => Instruction::F64Load(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Load8S => Instruction::I32Load8S(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Load8U => Instruction::I32Load8U(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Load16S => Instruction::I32Load16S(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Load16U => Instruction::I32Load16U(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load8S => Instruction::I64Load8S(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load8U => Instruction::I64Load8U(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load16S => Instruction::I64Load16S(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load16U => Instruction::I64Load16U(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load32S => Instruction::I64Load32S(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Load32U => Instruction::I64Load32U(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Store => Instruction::I32Store(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Store => Instruction::I64Store(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::F32Store => Instruction::F32Store(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::F64Store => Instruction::F64Store(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Store8 => Instruction::I32Store8(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I32Store16 => Instruction::I32Store16(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Store8 => Instruction::I64Store8(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Store16 => Instruction::I64Store16(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
+                Opcode::I64Store32 => Instruction::I64Store32(
+                    u32::from(self.decode_ver_uint_n()?),
+                    u32::from(self.decode_ver_uint_n()?),
+                ),
 
                 Opcode::I32Const => Instruction::I32Const(i32::from(self.decode_ver_uint_n()?)),
                 Opcode::I64Const => Instruction::I64Const(i64::from(self.decode_ver_uint_n()?)),
