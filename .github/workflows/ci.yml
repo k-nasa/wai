@@ -29,6 +29,11 @@ jobs:
         with:
           command: build
 
+      - name: test
+        uses: actions-rs/cargo@master
+        with:
+          command: test
+
   check_fmt_and_docs:
     name: Checking fmt and docs
     runs-on: ubuntu-latest
