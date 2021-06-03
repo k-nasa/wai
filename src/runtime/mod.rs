@@ -2,10 +2,7 @@ pub mod error;
 
 use crate::instruction::Instruction;
 use crate::types::RuntimeValue;
-use crate::types::*;
 use error::RuntimeError;
-use std::error::Error;
-use std::fmt::{self, Display};
 
 type ValueStack = Vec<RuntimeValue>;
 
@@ -25,7 +22,7 @@ impl Runtime {
         }
     }
 
-    pub fn step() -> Result<(), RuntimeError> {
+    fn _step() -> Result<(), RuntimeError> {
         todo!()
     }
 
@@ -73,7 +70,6 @@ impl Runtime {
                     }
 
                     let condition = bool::from(self.value_stack.pop().unwrap());
-                    dbg!(condition);
                     if condition {
                     } else {
                         skip_else_or_end = true;
