@@ -38,7 +38,9 @@ impl Runtime {
 
         let instructions = self.instructions.clone();
 
-        for instruction in instructions {
+        while let Some(&instruction) = instructions.get(self.pc) {
+            self.pc += 1;
+
             // TODO flagじゃなくてlabelでいい感じにしたい
             if skip_else_or_end {
                 // TODO support else
