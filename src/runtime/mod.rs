@@ -113,17 +113,33 @@ impl Runtime {
                 Instruction::I64Const(v) => self.value_stack.push(RuntimeValue::I64(v)),
                 Instruction::F32Const(v) => self.value_stack.push(RuntimeValue::F32(v)),
                 Instruction::F64Const(v) => self.value_stack.push(RuntimeValue::F64(v)),
-                Instruction::I32Add => {
-                    let a = self.value_stack.pop().unwrap();
-                    let b = self.value_stack.pop().unwrap();
-
-                    self.value_stack
-                        .push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
+                Instruction::I32Eqz => {
+                    let flag = if self.value_stack.pop().unwrap() == RuntimeValue::I32(0) {
+                        1
+                    } else {
+                        0
+                    };
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
-                Instruction::I32Eqz => todo!(),
-                Instruction::I32Eq => todo!(),
-                Instruction::I32Ne => todo!(),
-                Instruction::I32LtS => todo!(),
+                Instruction::I32Eq => {
+                    let flag = if self.value_stack.pop().unwrap() == self.value_stack.pop().unwrap()
+                    {
+                        1
+                    } else {
+                        0
+                    };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::I32Ne => {
+                    let flag = if self.value_stack.pop().unwrap() != self.value_stack.pop().unwrap()
+                    {
+                        1
+                    } else {
+                        0
+                    };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::I32LtS => {}
                 Instruction::I32LtU => todo!(),
                 Instruction::I32GtS => todo!(),
                 Instruction::I32GtU => todo!(),
