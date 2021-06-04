@@ -50,18 +50,9 @@ impl Runtime {
             }
             match instruction {
                 Instruction::Nop => {}
-                Instruction::GetLocal(_) => self.value_stack.push(locals.pop().unwrap()),
-                Instruction::SetLocal(i) => {
-                    let v = self.value_stack.pop().unwrap();
-                    locals.insert(usize::from(i), v);
-                }
-                Instruction::I32Add => {
-                    let a = self.value_stack.pop().unwrap();
-                    let b = self.value_stack.pop().unwrap();
-
-                    self.value_stack
-                        .push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
-                }
+                Instruction::Block(BlockType) => todo!(),
+                Instruction::Loop(BlockType) => todo!(),
+                Instruction::If(BlockType) => todo!(),
                 Instruction::If(_block_type) => {
                     if self.value_stack.is_empty() {
                         return Err(RuntimeError::Custom(
@@ -75,11 +66,60 @@ impl Runtime {
                         skip_else_or_end = true;
                     }
                 }
+                Instruction::Else => todo!(),
                 Instruction::End => {}
+                Instruction::Br(_) => todo!(),
+                Instruction::BrIf(_) => todo!(),
+                Instruction::BrTable => todo!(),
+                Instruction::Return => todo!(),
+                Instruction::Call(_) => todo!(),
+                Instruction::CallIndirect => todo!(),
+                Instruction::Drop => todo!(),
+                Instruction::Select => todo!(),
+                Instruction::GetLocal(_) => self.value_stack.push(locals.pop().unwrap()),
+                Instruction::SetLocal(i) => {
+                    let v = self.value_stack.pop().unwrap();
+                    locals.insert(usize::from(i), v);
+                }
+                Instruction::TeeLocal(_) => todo!(),
+                Instruction::GetGlobal(_) => todo!(),
+                Instruction::SetGlobal(_) => todo!(),
+                Instruction::I32Load(_, _) => todo!(),
+                Instruction::I64Load(_, _) => todo!(),
+                Instruction::F32Load(_, _) => todo!(),
+                Instruction::F64Load(_, _) => todo!(),
+                Instruction::I32Load8S(_, _) => todo!(),
+                Instruction::I32Load8U(_, _) => todo!(),
+                Instruction::I32Load16S(_, _) => todo!(),
+                Instruction::I32Load16U(_, _) => todo!(),
+                Instruction::I64Load8S(_, _) => todo!(),
+                Instruction::I64Load8U(_, _) => todo!(),
+                Instruction::I64Load16S(_, _) => todo!(),
+                Instruction::I64Load16U(_, _) => todo!(),
+                Instruction::I64Load32S(_, _) => todo!(),
+                Instruction::I64Load32U(_, _) => todo!(),
+                Instruction::I32Store(_, _) => todo!(),
+                Instruction::I64Store(_, _) => todo!(),
+                Instruction::F32Store(_, _) => todo!(),
+                Instruction::F64Store(_, _) => todo!(),
+                Instruction::I32Store8(_, _) => todo!(),
+                Instruction::I32Store16(_, _) => todo!(),
+                Instruction::I64Store8(_, _) => todo!(),
+                Instruction::I64Store16(_, _) => todo!(),
+                Instruction::I64Store32(_, _) => todo!(),
+                Instruction::CurrentMemory(VerUintN) => todo!(),
+                Instruction::GrowMemory(VerUintN) => todo!(),
                 Instruction::I32Const(v) => self.value_stack.push(RuntimeValue::I32(v)),
                 Instruction::I64Const(v) => self.value_stack.push(RuntimeValue::I64(v)),
                 Instruction::F32Const(v) => self.value_stack.push(RuntimeValue::F32(v)),
                 Instruction::F64Const(v) => self.value_stack.push(RuntimeValue::F64(v)),
+                Instruction::I32Add => {
+                    let a = self.value_stack.pop().unwrap();
+                    let b = self.value_stack.pop().unwrap();
+
+                    self.value_stack
+                        .push(RuntimeValue::I32(i32::from(a) + i32::from(b)));
+                }
                 Instruction::Unexpected(op) => {
                     return Err(RuntimeError::Custom(format!(
                         "unexpected opcode: {:0x}",
