@@ -358,4 +358,23 @@ impl Runtime {
         }
         Ok(self.value_stack.clone())
     }
+
+    fn pop_lr(&mut self) -> (RuntimeValue, RuntimeValue) {
+        let l = self.value_stack.pop().unwrap();
+        let r = self.value_stack.pop().unwrap();
+
+        (l, r)
+    }
+
+    fn pop_lr_i32(&mut self) -> (i32, i32) {
+        let (l, r) = self.pop_lr();
+
+        (i32::from(l), i32::from(r))
+    }
+
+    fn pop_lr_i64(&mut self) -> (i64, i64) {
+        let (l, r) = self.pop_lr();
+
+        (i64::from(l), i64::from(r))
+    }
 }

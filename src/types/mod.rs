@@ -33,6 +33,18 @@ impl From<RuntimeValue> for i32 {
     }
 }
 
+impl From<RuntimeValue> for i64 {
+    fn from(v: RuntimeValue) -> i64 {
+        use RuntimeValue::*;
+        match v {
+            I32(x) => x as i64,
+            I64(x) => x as i64,
+            F32(x) => x as i64,
+            F64(x) => x as i64,
+        }
+    }
+}
+
 impl From<RuntimeValue> for usize {
     fn from(v: RuntimeValue) -> usize {
         use RuntimeValue::*;
