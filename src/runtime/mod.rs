@@ -76,7 +76,10 @@ impl Runtime {
                     }
                 }
                 Instruction::End => {}
-                Instruction::I32Const(i) => self.value_stack.push(RuntimeValue::I32(i)),
+                Instruction::I32Const(v) => self.value_stack.push(RuntimeValue::I32(v)),
+                Instruction::I64Const(v) => self.value_stack.push(RuntimeValue::I64(v)),
+                Instruction::F32Const(v) => self.value_stack.push(RuntimeValue::F32(v)),
+                Instruction::F64Const(v) => self.value_stack.push(RuntimeValue::F64(v)),
                 Instruction::Unexpected(op) => {
                     return Err(RuntimeError::Custom(format!(
                         "unexpected opcode: {:0x}",
