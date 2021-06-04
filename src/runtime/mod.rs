@@ -157,16 +157,62 @@ impl Runtime {
                 Instruction::I32Clz => todo!(),
                 Instruction::I32Ctz => todo!(),
                 Instruction::I32Popcnt => todo!(),
-                Instruction::I32Add => todo!(),
-                Instruction::I32Sub => todo!(),
-                Instruction::I32Mul => todo!(),
-                Instruction::I32DivS => todo!(),
-                Instruction::I32DivU => todo!(),
-                Instruction::I32RemS => todo!(),
-                Instruction::I32RemU => todo!(),
-                Instruction::I32And => todo!(),
-                Instruction::I32Or => todo!(),
-                Instruction::I32Xor => todo!(),
+                Instruction::I32Add => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a + b));
+                }
+                Instruction::I32Sub => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a - b));
+                }
+                Instruction::I32Mul => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a * b));
+                }
+                Instruction::I32DivS => {
+                    // TODO test
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a / b));
+                }
+                Instruction::I32DivU => {
+                    // TODO test
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack
+                        .push(RuntimeValue::I32(a / b as u32 as i32)); // NOTE 適当にunsignedにしている。これで良いのかよう分からん
+                }
+                Instruction::I32RemS => {
+                    // TODO test
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a % b));
+                }
+                Instruction::I32RemU => {
+                    // TODO test
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack
+                        .push(RuntimeValue::I32(a % b as u32 as i32));
+                }
+                Instruction::I32And => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a & b));
+                }
+                Instruction::I32Or => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a | b));
+                }
+                Instruction::I32Xor => {
+                    let a = i32::from(self.value_stack.pop().unwrap());
+                    let b = i32::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I32(a ^ b));
+                }
                 Instruction::I32Shl => todo!(),
                 Instruction::I32ShrS => todo!(),
                 Instruction::I32ShrU => todo!(),
@@ -175,16 +221,58 @@ impl Runtime {
                 Instruction::I64Clz => todo!(),
                 Instruction::I64Ctz => todo!(),
                 Instruction::I64Popcnt => todo!(),
-                Instruction::I64Add => todo!(),
-                Instruction::I64Sub => todo!(),
-                Instruction::I64Mul => todo!(),
-                Instruction::I64DivS => todo!(),
-                Instruction::I64DivU => todo!(),
-                Instruction::I64RemS => todo!(),
-                Instruction::I64RemU => todo!(),
-                Instruction::I64And => todo!(),
-                Instruction::I64Or => todo!(),
-                Instruction::I64Xor => todo!(),
+                Instruction::I64Add => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a + b));
+                }
+                Instruction::I64Sub => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a - b));
+                }
+                Instruction::I64Mul => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a * b));
+                }
+                Instruction::I64DivS => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a / b));
+                }
+                Instruction::I64DivU => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack
+                        .push(RuntimeValue::I64(a / b as u64 as i64));
+                }
+                Instruction::I64RemS => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a % b));
+                }
+                Instruction::I64RemU => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack
+                        .push(RuntimeValue::I64(a % b as u64 as i64));
+                }
+                Instruction::I64And => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a & b));
+                }
+                Instruction::I64Or => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a | b));
+                }
+                Instruction::I64Xor => {
+                    let a = i64::from(self.value_stack.pop().unwrap());
+                    let b = i64::from(self.value_stack.pop().unwrap());
+                    self.value_stack.push(RuntimeValue::I64(a ^ b));
+                }
                 Instruction::I64Shl => todo!(),
                 Instruction::I64ShrS => todo!(),
                 Instruction::I64ShrU => todo!(),
