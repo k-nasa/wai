@@ -174,59 +174,49 @@ impl Runtime {
                 Instruction::I32Ctz => todo!(),
                 Instruction::I32Popcnt => todo!(),
                 Instruction::I32Add => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a + b));
                 }
                 Instruction::I32Sub => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a - b));
                 }
                 Instruction::I32Mul => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a * b));
                 }
                 Instruction::I32DivS => {
                     // TODO test
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a / b));
                 }
                 Instruction::I32DivU => {
                     // TODO test
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack
                         .push(RuntimeValue::I32(a / b as u32 as i32)); // NOTE 適当にunsignedにしている。これで良いのかよう分からん
                 }
                 Instruction::I32RemS => {
                     // TODO test
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a % b));
                 }
                 Instruction::I32RemU => {
                     // TODO test
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack
                         .push(RuntimeValue::I32(a % b as u32 as i32));
                 }
                 Instruction::I32And => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a & b));
                 }
                 Instruction::I32Or => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a | b));
                 }
                 Instruction::I32Xor => {
-                    let a = i32::from(self.value_stack.pop().unwrap());
-                    let b = i32::from(self.value_stack.pop().unwrap());
+                    let (a, b) = self.pop_lr_i32();
                     self.value_stack.push(RuntimeValue::I32(a ^ b));
                 }
                 Instruction::I32Shl => todo!(),
