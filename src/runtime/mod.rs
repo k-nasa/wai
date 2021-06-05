@@ -50,9 +50,8 @@ impl Runtime {
             }
             match instruction {
                 Instruction::Nop => {}
-                Instruction::Block(BlockType) => todo!(),
-                Instruction::Loop(BlockType) => todo!(),
-                Instruction::If(BlockType) => todo!(),
+                Instruction::Block(_) => todo!(),
+                Instruction::Loop(_) => todo!(),
                 Instruction::If(_block_type) => {
                     if self.value_stack.is_empty() {
                         return Err(RuntimeError::Custom(
@@ -401,13 +400,6 @@ impl Runtime {
                 Instruction::I64ReinterpretF64 => todo!(),
                 Instruction::F32ReinterpretI32 => todo!(),
                 Instruction::F64ReinterpretI64 => todo!(),
-
-                Instruction::Unexpected(op) => {
-                    return Err(RuntimeError::Custom(format!(
-                        "unexpected opcode: {:0x}",
-                        op
-                    )))
-                }
             }
         }
         Ok(self.value_stack.clone())

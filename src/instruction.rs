@@ -3,7 +3,6 @@ use crate::types::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Instruction {
-    Unexpected(u8),
     Nop,
     Block(BlockType),
     Loop(BlockType),
