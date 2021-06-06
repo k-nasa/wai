@@ -262,32 +262,32 @@ impl Runtime {
                 }
 
                 Instruction::F64Eq => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Ne => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a != b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Lt => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Gt => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Le => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Ge => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr_f64();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
