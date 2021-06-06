@@ -423,4 +423,15 @@ impl Runtime {
 
         (i64::from(l), i64::from(r))
     }
+    fn pop_lr_f32(&mut self) -> (f32, f32) {
+        let (l, r) = self.pop_lr();
+
+        (f32::from(l), f32::from(r))
+    }
+
+    fn pop_lr_f64(&mut self) -> (f64, f64) {
+        let (l, r) = self.pop_lr();
+
+        (f64::from(l), f64::from(r))
+    }
 }
