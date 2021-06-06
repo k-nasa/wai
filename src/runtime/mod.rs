@@ -182,66 +182,115 @@ impl Runtime {
                 Instruction::I64Eq => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a == b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64Ne => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a != b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LtS => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LtU => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GtS => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a > b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GtU => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a > b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LeS => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a <= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LeU => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a <= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GeS => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a >= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GeU => {
                     let (a, b) = self.pop_lr_i64();
                     let flag = if a >= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I64(flag));
+                    self.value_stack.push(RuntimeValue::I32(flag));
                 }
 
-                Instruction::F32Eq => todo!(),
-                Instruction::F32Ne => todo!(),
-                Instruction::F32Lt => todo!(),
-                Instruction::F32Gt => todo!(),
-                Instruction::F32Le => todo!(),
-                Instruction::F32Ge => todo!(),
-                Instruction::F64Eq => todo!(),
-                Instruction::F64Ne => todo!(),
-                Instruction::F64Lt => todo!(),
-                Instruction::F64Gt => todo!(),
-                Instruction::F64Le => todo!(),
-                Instruction::F64Ge => todo!(),
+                Instruction::F32Eq => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F32Ne => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a != b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F32Lt => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F32Gt => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F32Le => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F32Ge => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+
+                Instruction::F64Eq => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F64Ne => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a != b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F64Lt => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F64Gt => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F64Le => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
+                Instruction::F64Ge => {
+                    let (a, b) = self.pop_lr_f32();
+                    let flag = if a == b { 1 } else { 0 };
+                    self.value_stack.push(RuntimeValue::I32(flag));
+                }
 
                 Instruction::I32Clz => todo!(),
                 Instruction::I32Ctz => todo!(),
