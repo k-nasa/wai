@@ -120,56 +120,16 @@ impl Runtime {
                     };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
-                Instruction::I32Eq => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a == b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32Ne => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a != b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32LtS => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32LtU => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32GtS => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a > b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32GtU => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a > b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32LeS => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a <= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32LeU => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a <= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32GeS => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a >= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I32GeU => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    let flag = if a >= b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
+                Instruction::I32Eq => self.eq::<i32>(),
+                Instruction::I32Ne => self.neq::<i32>(),
+                Instruction::I32LtS => self.lt_s::<i32>(),
+                Instruction::I32LtU => self.lt_u::<i32>(),
+                Instruction::I32GtS => self.gt_s::<i32>(),
+                Instruction::I32GtU => self.gt_s::<i32>(),
+                Instruction::I32LeS => self.le_s::<i32>(),
+                Instruction::I32LeU => self.le_u::<i32>(),
+                Instruction::I32GeS => self.ge_s::<i32>(),
+                Instruction::I32GeU => self.ge_u::<i32>(),
 
                 Instruction::I64Eqz => {
                     let flag = if self.value_stack.pop().unwrap() == RuntimeValue::I64(0) {
@@ -179,26 +139,10 @@ impl Runtime {
                     };
                     self.value_stack.push(RuntimeValue::I64(flag));
                 }
-                Instruction::I64Eq => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    let flag = if a == b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I64Ne => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    let flag = if a != b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I64LtS => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
-                Instruction::I64LtU => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    let flag = if a < b { 1 } else { 0 };
-                    self.value_stack.push(RuntimeValue::I32(flag));
-                }
+                Instruction::I64Eq => self.eq::<i64>(),
+                Instruction::I64Ne => self.neq::<i64>(),
+                Instruction::I64LtS => self.lt_s::<i64>(),
+                Instruction::I64LtU => self.lt_u::<i64>(),
                 Instruction::I64GtS => {
                     let (a, b) = self.pop_lr::<i64>();
                     let flag = if a > b { 1 } else { 0 };
@@ -464,9 +408,97 @@ impl Runtime {
         (T::from(l), T::from(r))
     }
 
-    fn eq<T>(&mut self) -> i32 {
-        let (a, b) = self.pop_lr::<i32>();
+    fn eq<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialEq,
+    {
+        let (a, b) = self.pop_lr::<T>();
         let flag = if a == b { 1 } else { 0 };
-        flag
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn neq<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialEq,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a != b { 1 } else { 0 };
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn lt_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a < b { 1 } else { 0 };
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn lt_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a < b { 1 } else { 0 };
+        // TODO unsigned
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn gt_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a > b { 1 } else { 0 };
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn gt_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a > b { 1 } else { 0 };
+        // TODO unsigned
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn le_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a <= b { 1 } else { 0 };
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn le_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a <= b { 1 } else { 0 };
+        // TODO unsigned
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn ge_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a >= b { 1 } else { 0 };
+        self.value_stack.push(RuntimeValue::I32(flag));
+    }
+
+    fn ge_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + PartialOrd,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let flag = if a >= b { 1 } else { 0 };
+        // TODO unsigned
+        self.value_stack.push(RuntimeValue::I32(flag));
     }
 }
