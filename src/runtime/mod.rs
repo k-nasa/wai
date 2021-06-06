@@ -121,52 +121,52 @@ impl Runtime {
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32Eq => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32Ne => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a != b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32LtS => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a < b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32LtU => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a < b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32GtS => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a > b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32GtU => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a > b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32LeS => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a <= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32LeU => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a <= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32GeS => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a >= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I32GeU => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     let flag = if a >= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
@@ -180,114 +180,114 @@ impl Runtime {
                     self.value_stack.push(RuntimeValue::I64(flag));
                 }
                 Instruction::I64Eq => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64Ne => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a != b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LtS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a < b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LtU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a < b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GtS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a > b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GtU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a > b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LeS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a <= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64LeU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a <= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GeS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a >= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::I64GeU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a >= b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
 
                 Instruction::F32Eq => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<f32>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F32Ne => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<f32>();
                     let flag = if a != b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F32Lt => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F32Gt => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F32Le => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F32Ge => {
-                    let (a, b) = self.pop_lr_f32();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
 
                 Instruction::F64Eq => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Ne => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a != b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Lt => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Gt => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Le => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
                 Instruction::F64Ge => {
-                    let (a, b) = self.pop_lr_f64();
+                    let (a, b) = self.pop_lr::<i64>();
                     let flag = if a == b { 1 } else { 0 };
                     self.value_stack.push(RuntimeValue::I32(flag));
                 }
@@ -296,49 +296,49 @@ impl Runtime {
                 Instruction::I32Ctz => todo!(),
                 Instruction::I32Popcnt => todo!(),
                 Instruction::I32Add => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a + b));
                 }
                 Instruction::I32Sub => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a - b));
                 }
                 Instruction::I32Mul => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a * b));
                 }
                 Instruction::I32DivS => {
                     // TODO test
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a / b));
                 }
                 Instruction::I32DivU => {
                     // TODO test
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack
                         .push(RuntimeValue::I32(a / b as u32 as i32)); // NOTE 適当にunsignedにしている。これで良いのかよう分からん
                 }
                 Instruction::I32RemS => {
                     // TODO test
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a % b));
                 }
                 Instruction::I32RemU => {
                     // TODO test
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack
                         .push(RuntimeValue::I32(a % b as u32 as i32));
                 }
                 Instruction::I32And => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a & b));
                 }
                 Instruction::I32Or => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a | b));
                 }
                 Instruction::I32Xor => {
-                    let (a, b) = self.pop_lr_i32();
+                    let (a, b) = self.pop_lr::<i32>();
                     self.value_stack.push(RuntimeValue::I32(a ^ b));
                 }
                 Instruction::I32Shl => todo!(),
@@ -350,45 +350,45 @@ impl Runtime {
                 Instruction::I64Ctz => todo!(),
                 Instruction::I64Popcnt => todo!(),
                 Instruction::I64Add => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a + b));
                 }
                 Instruction::I64Sub => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a - b));
                 }
                 Instruction::I64Mul => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a * b));
                 }
                 Instruction::I64DivS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a / b));
                 }
                 Instruction::I64DivU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack
                         .push(RuntimeValue::I64(a / b as u64 as i64));
                 }
                 Instruction::I64RemS => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a % b));
                 }
                 Instruction::I64RemU => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack
                         .push(RuntimeValue::I64(a % b as u64 as i64));
                 }
                 Instruction::I64And => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a & b));
                 }
                 Instruction::I64Or => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a | b));
                 }
                 Instruction::I64Xor => {
-                    let (a, b) = self.pop_lr_i64();
+                    let (a, b) = self.pop_lr::<i64>();
                     self.value_stack.push(RuntimeValue::I64(a ^ b));
                 }
                 Instruction::I64Shl => todo!(),
@@ -454,33 +454,19 @@ impl Runtime {
         Ok(self.value_stack.clone())
     }
 
-    fn pop_lr(&mut self) -> (RuntimeValue, RuntimeValue) {
+    fn pop_lr<T>(&mut self) -> (T, T)
+    where
+        T: From<RuntimeValue>,
+    {
         let l = self.value_stack.pop().unwrap();
         let r = self.value_stack.pop().unwrap();
 
-        (l, r)
+        (T::from(l), T::from(r))
     }
 
-    fn pop_lr_i32(&mut self) -> (i32, i32) {
-        let (l, r) = self.pop_lr();
-
-        (i32::from(l), i32::from(r))
-    }
-
-    fn pop_lr_i64(&mut self) -> (i64, i64) {
-        let (l, r) = self.pop_lr();
-
-        (i64::from(l), i64::from(r))
-    }
-    fn pop_lr_f32(&mut self) -> (f32, f32) {
-        let (l, r) = self.pop_lr();
-
-        (f32::from(l), f32::from(r))
-    }
-
-    fn pop_lr_f64(&mut self) -> (f64, f64) {
-        let (l, r) = self.pop_lr();
-
-        (f64::from(l), f64::from(r))
+    fn eq<T>(&mut self) -> i32 {
+        let (a, b) = self.pop_lr::<i32>();
+        let flag = if a == b { 1 } else { 0 };
+        flag
     }
 }
