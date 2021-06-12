@@ -92,6 +92,30 @@ impl From<RuntimeValue> for f64 {
     }
 }
 
+impl From<i32> for RuntimeValue {
+    fn from(x: i32) -> Self {
+        RuntimeValue::I32(x)
+    }
+}
+
+impl From<i64> for RuntimeValue {
+    fn from(x: i64) -> Self {
+        RuntimeValue::I64(x)
+    }
+}
+
+impl From<f32> for RuntimeValue {
+    fn from(x: f32) -> Self {
+        RuntimeValue::F32(x)
+    }
+}
+
+impl From<f64> for RuntimeValue {
+    fn from(x: f64) -> Self {
+        RuntimeValue::F64(x)
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ValueType {
     I32,

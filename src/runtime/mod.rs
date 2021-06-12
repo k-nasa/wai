@@ -167,52 +167,16 @@ impl Runtime {
                 Instruction::I32Clz => todo!(),
                 Instruction::I32Ctz => todo!(),
                 Instruction::I32Popcnt => todo!(),
-                Instruction::I32Add => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a + b));
-                }
-                Instruction::I32Sub => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a - b));
-                }
-                Instruction::I32Mul => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a * b));
-                }
-                Instruction::I32DivS => {
-                    // TODO test
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a / b));
-                }
-                Instruction::I32DivU => {
-                    // TODO test
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack
-                        .push(RuntimeValue::I32(a / b as u32 as i32)); // NOTE 適当にunsignedにしている。これで良いのかよう分からん
-                }
-                Instruction::I32RemS => {
-                    // TODO test
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a % b));
-                }
-                Instruction::I32RemU => {
-                    // TODO test
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack
-                        .push(RuntimeValue::I32(a % b as u32 as i32));
-                }
-                Instruction::I32And => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a & b));
-                }
-                Instruction::I32Or => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a | b));
-                }
-                Instruction::I32Xor => {
-                    let (a, b) = self.pop_lr::<i32>();
-                    self.value_stack.push(RuntimeValue::I32(a ^ b));
-                }
+                Instruction::I32Add => self.add::<i32>(),
+                Instruction::I32Sub => self.sub::<i32>(),
+                Instruction::I32Mul => self.mul::<i32>(),
+                Instruction::I32DivS => self.div_s::<i32>(),
+                Instruction::I32DivU => self.div_u::<i32>(),
+                Instruction::I32RemS => self.rem_s::<i32>(),
+                Instruction::I32RemU => self.rem_u::<i32>(),
+                Instruction::I32And => self.and::<i32>(),
+                Instruction::I32Or => self.or::<i32>(),
+                Instruction::I32Xor => self.xor::<i32>(),
                 Instruction::I32Shl => todo!(),
                 Instruction::I32ShrS => todo!(),
                 Instruction::I32ShrU => todo!(),
@@ -472,6 +436,87 @@ impl Runtime {
     {
         let (a, b) = self.pop_lr::<T>();
         let added = a + b;
+        self.value_stack.push(added.into());
+    }
+
+    fn sub<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Sub<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a - b;
+        self.value_stack.push(added.into());
+    }
+
+    fn mul<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Mul<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a * b;
+        self.value_stack.push(added.into());
+    }
+
+    fn div_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Div<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a / b;
+        self.value_stack.push(added.into());
+    }
+
+    fn div_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Div<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a / b;
+        self.value_stack.push(added.into());
+    }
+
+    fn rem_s<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Rem<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a % b;
+        self.value_stack.push(added.into());
+    }
+
+    fn rem_u<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Rem<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a % b;
+        self.value_stack.push(added.into());
+    }
+
+    fn and<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::BitAnd<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a & b;
+        self.value_stack.push(added.into());
+    }
+
+    fn or<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::BitOr<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a | b;
+        self.value_stack.push(added.into());
+    }
+
+    fn xor<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::BitXor<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a ^ b;
         self.value_stack.push(added.into());
     }
 }
