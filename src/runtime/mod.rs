@@ -58,7 +58,6 @@ impl Runtime {
                             "value stack is empty, if is expected value".to_string(),
                         ));
                     }
-
                     let condition = bool::from(self.value_stack.pop().unwrap());
                     if condition {
                     } else {
@@ -182,6 +181,7 @@ impl Runtime {
                 Instruction::I32ShrU => todo!(),
                 Instruction::I32Rotl => todo!(),
                 Instruction::I32Rotr => todo!(),
+
                 Instruction::I64Clz => todo!(),
                 Instruction::I64Ctz => todo!(),
                 Instruction::I64Popcnt => todo!(),
@@ -200,6 +200,7 @@ impl Runtime {
                 Instruction::I64ShrU => todo!(),
                 Instruction::I64Rotl => todo!(),
                 Instruction::I64Rotr => todo!(),
+
                 Instruction::F32Abs => todo!(),
                 Instruction::F32Neg => todo!(),
                 Instruction::F32Ceil => todo!(),
@@ -207,7 +208,6 @@ impl Runtime {
                 Instruction::F32Trunc => todo!(),
                 Instruction::F32Nearest => todo!(),
                 Instruction::F32Sqrt => todo!(),
-
                 Instruction::F32Add => self.add::<f32>(),
                 Instruction::F32Sub => self.sub::<f32>(),
                 Instruction::F32Mul => self.mul::<f32>(),
@@ -215,6 +215,7 @@ impl Runtime {
                 Instruction::F32Min => todo!(),
                 Instruction::F32Max => todo!(),
                 Instruction::F32Copysign => todo!(),
+
                 Instruction::F64Abs => todo!(),
                 Instruction::F64Neg => todo!(),
                 Instruction::F64Ceil => todo!(),
