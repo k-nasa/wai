@@ -185,48 +185,16 @@ impl Runtime {
                 Instruction::I64Clz => todo!(),
                 Instruction::I64Ctz => todo!(),
                 Instruction::I64Popcnt => todo!(),
-                Instruction::I64Add => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a + b));
-                }
-                Instruction::I64Sub => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a - b));
-                }
-                Instruction::I64Mul => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a * b));
-                }
-                Instruction::I64DivS => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a / b));
-                }
-                Instruction::I64DivU => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack
-                        .push(RuntimeValue::I64(a / b as u64 as i64));
-                }
-                Instruction::I64RemS => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a % b));
-                }
-                Instruction::I64RemU => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack
-                        .push(RuntimeValue::I64(a % b as u64 as i64));
-                }
-                Instruction::I64And => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a & b));
-                }
-                Instruction::I64Or => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a | b));
-                }
-                Instruction::I64Xor => {
-                    let (a, b) = self.pop_lr::<i64>();
-                    self.value_stack.push(RuntimeValue::I64(a ^ b));
-                }
+                Instruction::I64Add => self.add::<i64>(),
+                Instruction::I64Sub => self.sub::<i64>(),
+                Instruction::I64Mul => self.mul::<i64>(),
+                Instruction::I64DivS => self.div_s::<i64>(),
+                Instruction::I64DivU => self.div_u::<i64>(),
+                Instruction::I64RemS => self.rem_s::<i64>(),
+                Instruction::I64RemU => self.rem_u::<i64>(),
+                Instruction::I64And => self.and::<i64>(),
+                Instruction::I64Or => self.or::<i64>(),
+                Instruction::I64Xor => self.xor::<i64>(),
                 Instruction::I64Shl => todo!(),
                 Instruction::I64ShrS => todo!(),
                 Instruction::I64ShrU => todo!(),
@@ -239,10 +207,11 @@ impl Runtime {
                 Instruction::F32Trunc => todo!(),
                 Instruction::F32Nearest => todo!(),
                 Instruction::F32Sqrt => todo!(),
-                Instruction::F32Add => todo!(),
-                Instruction::F32Sub => todo!(),
-                Instruction::F32Mul => todo!(),
-                Instruction::F32Div => todo!(),
+
+                Instruction::F32Add => self.add::<f32>(),
+                Instruction::F32Sub => self.sub::<f32>(),
+                Instruction::F32Mul => self.mul::<f32>(),
+                Instruction::F32Div => self.div_s::<f32>(),
                 Instruction::F32Min => todo!(),
                 Instruction::F32Max => todo!(),
                 Instruction::F32Copysign => todo!(),
@@ -253,10 +222,10 @@ impl Runtime {
                 Instruction::F64Trunc => todo!(),
                 Instruction::F64Nearest => todo!(),
                 Instruction::F64Sqrt => todo!(),
-                Instruction::F64Add => todo!(),
-                Instruction::F64Sub => todo!(),
-                Instruction::F64Mul => todo!(),
-                Instruction::F64Div => todo!(),
+                Instruction::F64Add => self.add::<f32>(),
+                Instruction::F64Sub => self.sub::<f32>(),
+                Instruction::F64Mul => self.mul::<f32>(),
+                Instruction::F64Div => self.div_s::<f32>(),
                 Instruction::F64Min => todo!(),
                 Instruction::F64Max => todo!(),
                 Instruction::F64Copysign => todo!(),
