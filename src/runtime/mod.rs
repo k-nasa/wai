@@ -465,4 +465,13 @@ impl Runtime {
         // TODO unsigned
         self.value_stack.push(RuntimeValue::I32(flag));
     }
+
+    fn add<T>(&mut self)
+    where
+        T: From<RuntimeValue> + std::ops::Add<Output = T> + Into<RuntimeValue>,
+    {
+        let (a, b) = self.pop_lr::<T>();
+        let added = a + b;
+        self.value_stack.push(added.into());
+    }
 }
