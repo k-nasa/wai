@@ -230,27 +230,32 @@ impl Runtime {
                 Instruction::F64Min => todo!(),
                 Instruction::F64Max => todo!(),
                 Instruction::F64Copysign => todo!(),
+
                 Instruction::I32WrapI64 => todo!(),
                 Instruction::I32TruncSF32 => todo!(),
                 Instruction::I32TruncUF32 => todo!(),
                 Instruction::I32TruncSF64 => todo!(),
                 Instruction::I32TruncUF64 => todo!(),
+
                 Instruction::I64ExtendSI32 => todo!(),
                 Instruction::I64ExtendUI32 => todo!(),
                 Instruction::I64TruncSF32 => todo!(),
                 Instruction::I64TruncUF32 => todo!(),
                 Instruction::I64TruncSF64 => todo!(),
                 Instruction::I64TruncUF64 => todo!(),
+
                 Instruction::F32ConvertSI32 => todo!(),
                 Instruction::F32ConvertUI32 => todo!(),
                 Instruction::F32ConvertSI64 => todo!(),
                 Instruction::F32ConvertUI64 => todo!(),
                 Instruction::F32DemoteF64 => todo!(),
+
                 Instruction::F64ConvertSI32 => todo!(),
                 Instruction::F64ConvertUI32 => todo!(),
                 Instruction::F64ConvertSI64 => todo!(),
                 Instruction::F64ConvertUI64 => todo!(),
                 Instruction::F64PromoteF32 => todo!(),
+
                 Instruction::I32ReinterpretF32 => todo!(),
                 Instruction::I64ReinterpretF64 => todo!(),
                 Instruction::F32ReinterpretI32 => todo!(),
