@@ -1,5 +1,5 @@
 (module
-  (func $if (param $lhs i32) (result i32) (local i32)
+  (func $global (param $lhs i32) (result i32) (local i32)
     get_local $lhs
     if
       i32.const 100

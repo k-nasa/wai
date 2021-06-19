@@ -6,6 +6,9 @@ authors = ["k-nasa <htilcs1115@gmail.com>"]
 description = "A simple wasm interpreter"
 repository = "https://github.com/k-nasa/wasmi"
 license-file = "LICENSE"
+readme = "README.md"
+categories = ["wasm", "command-line-interface"]
+keywords = ["wasm", "webassembly", "cli"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -14,3 +17,4 @@ anyhow = "*"
 clap = "3.0.0-beta.2"
 env_logger = "0.8.3"
 log = "0.4.14"
+wabt = "0.10.0"
