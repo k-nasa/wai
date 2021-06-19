@@ -5,7 +5,7 @@ use std::fmt::{self, Display};
 pub enum DecodeError {
     InvalidWasmFile,
     InvalidNumeric,
-    Unexpected,
+    Unexpected(String),
     IOError(std::io::Error),
 }
 
@@ -16,7 +16,7 @@ impl Display for DecodeError {
         match self {
             InvalidWasmFile => write!(f, "invalid input file. not wasm file"),
             InvalidNumeric => write!(f, "invalid numeric"),
-            Unexpected => write!(f, "unexpected byte(todo implement more information"),
+            Unexpected(s) => write!(f, "unexpected byte. details: {}", s),
             IOError(i) => write!(f, "io error: {}", i),
         }
     }

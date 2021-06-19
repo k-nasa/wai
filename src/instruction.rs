@@ -1,8 +1,9 @@
 use crate::opcode::Opcode;
 use crate::types::*;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Instruction {
+    Unreachable,
     Nop,
     Block(BlockType),
     Loop(BlockType),
@@ -11,7 +12,7 @@ pub enum Instruction {
     End,
     Br(VerUintN),
     BrIf(VerUintN),
-    BrTable,
+    BrTable(Vec<VerUintN>, VerUintN),
     Return,
     Call(VerUintN),
     CallIndirect,
@@ -180,10 +181,10 @@ impl From<Opcode> for Instruction {
     fn from(opcode: Opcode) -> Self {
         use Instruction::*;
         match opcode {
+            Opcode::Unreachable => Unreachable,
             Opcode::Nop => Nop,
             Opcode::Else => Else,
             Opcode::End => End,
-            Opcode::BrTable => BrTable,
             Opcode::Return => Return,
             Opcode::CallIndirect => CallIndirect,
             Opcode::Drop => Drop,
@@ -311,7 +312,7 @@ impl From<Opcode> for Instruction {
             Opcode::I64ReinterpretF64 => I64ReinterpretF64,
             Opcode::F32ReinterpretI32 => F32ReinterpretI32,
             Opcode::F64ReinterpretI64 => F64ReinterpretI64,
-            _ => todo!("{:?}", opcode),
+            _ => todo!("{:x?}", opcode),
         }
     }
 }

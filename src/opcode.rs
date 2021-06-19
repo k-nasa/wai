@@ -1,6 +1,10 @@
+use crate::decode::error::DecodeError;
+use std::convert::TryFrom;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Opcode {
     Unexpected(u8),
+    Unreachable,
     Nop,
     Block,
     Loop,
@@ -174,11 +178,14 @@ pub enum Opcode {
     F64ReinterpretI64,
 }
 
-impl From<u8> for Opcode {
-    fn from(x: u8) -> Self {
+impl TryFrom<u8> for Opcode {
+    type Error = DecodeError;
+
+    fn try_from(x: u8) -> Result<Self, Self::Error> {
         use Opcode::*;
 
-        match x {
+        let opcode = match x {
+            0x00 => Unreachable,
             0x01 => Nop,
             0x02 => Block,
             0x03 => Loop,
@@ -350,7 +357,12 @@ impl From<u8> for Opcode {
             0xBD => I64ReinterpretF64,
             0xBE => F32ReinterpretI32,
             0xBF => F64ReinterpretI64,
-            _ => Unexpected(x),
-        }
+            opcode => Err(DecodeError::Unexpected(format!(
+                "unexpected opcode {:x}",
+                opcode
+            )))?,
+        };
+
+        Ok(opcode)
     }
 }

@@ -3,6 +3,7 @@ use crate::instruction::Instruction;
 use crate::module::{Section, SectionType};
 use crate::opcode::Opcode;
 use crate::types::*;
+use std::convert::TryFrom;
 use std::io::Cursor;
 use std::io::Read;
 
@@ -95,7 +96,7 @@ impl<'a> Decoder<'a> {
         for _ in 0..entry_count.into() {
             let func_type = type_section_decoder.read_next()?;
             if func_type != FUNC_TYPE {
-                return Err(DecodeError::Unexpected);
+                return Err(DecodeError::Unexpected(String::new()));
             }
 
             let mut func_type = FuncType {
@@ -274,7 +275,7 @@ impl<'a> Decoder<'a> {
     fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
         let mut instructions = Vec::new();
         loop {
-            let opcode = Opcode::from(self.read_next()?);
+            let opcode = Opcode::try_from(self.read_next()?)?;
             if self.is_end() {
                 break;
             }
@@ -297,7 +298,16 @@ impl<'a> Decoder<'a> {
                 Opcode::CurrentMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
                 Opcode::GrowMemory => Instruction::GrowMemory(self.decode_ver_uint_n()?),
 
-                Opcode::BrTable => todo!(),
+                Opcode::BrTable => {
+                    let target_count = self.decode_ver_uint_n()?;
+                    let mut target_tables = vec![];
+                    for _ in 0..u32::from(target_count) {
+                        target_tables.push(self.decode_ver_uint_n()?);
+                    }
+                    let default_target = self.decode_ver_uint_n()?;
+
+                    Instruction::BrTable(target_tables, default_target)
+                }
                 Opcode::CallIndirect => todo!(),
 
                 Opcode::I32Load => Instruction::I32Load(

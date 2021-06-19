@@ -33,9 +33,9 @@ impl Runtime {
         // let mut activation_stack: Vec<u8> = Vec::new();
         let mut skip_else_or_end = false;
 
-        let instructions = self.instructions.clone();
+        while let Some(instruction) = self.instructions.get(self.pc) {
+            let instruction = instruction.clone();
 
-        while let Some(&instruction) = instructions.get(self.pc) {
             self.pc += 1;
 
             // TODO flagじゃなくてlabelでいい感じにしたい
@@ -49,6 +49,7 @@ impl Runtime {
                 continue;
             }
             match instruction {
+                Instruction::Unreachable => {} // FIXME とりあえず握りつぶしてしまう。良いハンドリングを行いたい
                 Instruction::Nop => {}
                 Instruction::Block(_) => todo!(),
                 Instruction::Loop(_) => todo!(),
@@ -68,7 +69,7 @@ impl Runtime {
                 Instruction::End => {}
                 Instruction::Br(_) => todo!(),
                 Instruction::BrIf(_) => todo!(),
-                Instruction::BrTable => todo!(),
+                Instruction::BrTable(_, _) => todo!(),
                 Instruction::Return => todo!(),
                 Instruction::Call(_) => todo!(),
                 Instruction::CallIndirect => todo!(),
