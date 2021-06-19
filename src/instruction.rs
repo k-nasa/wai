@@ -3,7 +3,6 @@ use crate::types::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Instruction {
-    Proposals,
     Reserved,
     Prefix(VerUintN),
     Unreachable,
@@ -314,7 +313,6 @@ impl From<Opcode> for Instruction {
             Opcode::I64ReinterpretF64 => I64ReinterpretF64,
             Opcode::F32ReinterpretI32 => F32ReinterpretI32,
             Opcode::F64ReinterpretI64 => F64ReinterpretI64,
-            Opcode::Proposals => Proposals,
             Opcode::Reserved => Reserved,
             _ => todo!("{:x?}", opcode),
         }

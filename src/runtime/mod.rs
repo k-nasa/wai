@@ -49,7 +49,6 @@ impl Runtime {
                 continue;
             }
             match instruction {
-                Instruction::Proposals => {}
                 Instruction::Reserved => {}
                 Instruction::Prefix(_) => {}
 

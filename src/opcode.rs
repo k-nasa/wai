@@ -3,7 +3,6 @@ use std::convert::TryFrom;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Opcode {
-    Unexpected(u8),
     Unreachable,
     Nop,
     Block,
@@ -176,7 +175,6 @@ pub enum Opcode {
     I64ReinterpretF64,
     F32ReinterpretI32,
     F64ReinterpretI64,
-    Proposals,
     Reserved,
     Prefix,
 }
