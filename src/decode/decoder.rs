@@ -251,15 +251,27 @@ impl<'a> Decoder<'a> {
         let mut section = vec![0; size as usize];
         self.reader.read_exact(&mut section)?;
 
-        // let mut data_section_decoder = Decoder::new(Cursor::new(&section));
-        //
-        // let count = data_section_decoder.decode_ver_uint_n()?;
-        //
-        // for _ in 0..count {
-        //
-        // }
+        let mut data_section_decoder = Decoder::new(Cursor::new(&section));
 
-        Ok(Section::Data(()))
+        let count = data_section_decoder.decode_ver_uint_n()?;
+
+        let mut segments = vec![];
+        for _ in 0..count.into() {
+            let index = data_section_decoder.decode_ver_uint_n()?;
+            let _opcode = data_section_decoder.read_next()?;
+            let offset = data_section_decoder.decode_ver_uint_n()?;
+            let size = data_section_decoder.decode_ver_uint_n()?;
+
+            let data = data_section_decoder.read_byte(usize::from(size))?;
+
+            segments.push(DataSegment {
+                data,
+                index: index.into(),
+                offset: offset.into(),
+            })
+        }
+
+        Ok(Section::Data(DataSection { segments }))
     }
 
     fn decode_ver_uint_n(&mut self) -> Result<VerUintN, DecodeError> {

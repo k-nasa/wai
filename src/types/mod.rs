@@ -306,6 +306,18 @@ impl From<VerUintN> for ExternalKind {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct DataSegment {
+    pub index: u32,
+    pub offset: u32,
+    pub data: Vec<u8>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct DataSection {
+    pub segments: Vec<DataSegment>,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct CodeSection {
     pub(crate) bodies: Vec<FunctionBody>,

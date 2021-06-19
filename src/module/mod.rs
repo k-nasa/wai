@@ -15,7 +15,7 @@ pub struct Module {
     pub(crate) element_section: Option<()>,
     pub(crate) start_section: Option<()>,
     pub(crate) code_section: Option<CodeSection>,
-    pub(crate) data_section: Option<()>,
+    pub(crate) data_section: Option<DataSection>,
 }
 
 impl Default for Module {
@@ -115,5 +115,5 @@ pub enum Section {
     Start(()),
     Element(()),
     Code(CodeSection),
-    Data(()),
+    Data(DataSection),
 }
