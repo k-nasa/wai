@@ -34,7 +34,6 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
                     _ => unreachable!(),
                 };
 
-                dbg!(format!("run {}", &invoke));
                 let args = args_to_runtime_value(args);
                 let instance = Instance::new(m.clone());
                 let return_values = instance.invoke(&invoke, args.clone())?;
