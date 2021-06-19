@@ -34,6 +34,11 @@ jobs:
         with:
           command: test
 
+      - name: fuzzing
+        run: |
+          cargo install cargo-fuzz
+          cargo fuzz run decode --jobs 4 -- -runs=10000
+
   check_fmt_and_docs:
     name: Checking fmt and docs
     runs-on: ubuntu-latest
