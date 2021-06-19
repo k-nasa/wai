@@ -60,11 +60,19 @@ impl Instance {
     }
 
     fn get_func_type(&self, index: usize) -> Result<&FuncType, RuntimeError> {
+        let func_section = &self.module.function_section.as_ref();
+        if func_section.is_none() {
+            return Err(RuntimeError::ExpectCodeSection); // fix error type
+        }
+
+        let t = func_section.unwrap().types.get(index).unwrap();
+
         let type_section = &self.module.type_section.as_ref();
         if type_section.is_none() {
             return Err(RuntimeError::ExpectCodeSection); // fix error type
         }
-        let types = type_section.unwrap().entries.get(index).unwrap();
+
+        let types = type_section.unwrap().entries.get(*t as usize).unwrap();
 
         Ok(types)
     }
