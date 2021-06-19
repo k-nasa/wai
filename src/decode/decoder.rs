@@ -269,13 +269,22 @@ impl<'a> Decoder<'a> {
                 break;
             }
         }
+
+        dbg!(format!("decode_ver_uint_n byte {}, hex {:x}", value, value));
         Ok(VerUintN::from(value))
     }
 
     fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
         let mut instructions = Vec::new();
         loop {
-            let opcode = Opcode::try_from(self.read_next()?)?;
+            let opcode = match Opcode::try_from(self.read_next()?) {
+                Ok(v) => v,
+                Err(e) => Err(DecodeError::Unexpected(format!(
+                    "error: {}\nnow decoded instructions is {:?}",
+                    e, instructions
+                )))?,
+            };
+
             if self.is_end() {
                 break;
             }
@@ -417,9 +426,10 @@ impl<'a> Decoder<'a> {
     }
 
     fn read_next(&mut self) -> Result<u8, DecodeError> {
-        let mut buf = [0; 1];
+        let mut buf = [0u8; 1];
         self.reader.read_exact(&mut buf)?;
 
+        dbg!(format!("read_next byte {}, hex {:x}", buf[0], buf[0]));
         Ok(buf[0])
     }
 
