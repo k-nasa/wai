@@ -346,12 +346,6 @@ impl<'a> Decoder<'a> {
                     Instruction::BrTable(target_tables, default_target)
                 }
                 Opcode::CallIndirect => {
-                    // let v: u32 = VarUint32::decode(&mut reader)?.into();
-                    // operands.push(Operand::U32(v));
-                    // decoded.push((i, operands));
-                    // // Reserved
-                    // let _ = VarUint32::decode(&mut reader)?;
-
                     let type_index = self.decode_ver_uint_n()?;
                     let reserved = self.decode_ver_uint_n()?;
 
