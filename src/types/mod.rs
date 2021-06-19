@@ -119,6 +119,12 @@ impl From<i32> for RuntimeValue {
     }
 }
 
+impl From<u8> for RuntimeValue {
+    fn from(x: u8) -> Self {
+        RuntimeValue::I32(x as i32)
+    }
+}
+
 impl From<i64> for RuntimeValue {
     fn from(x: i64) -> Self {
         RuntimeValue::I64(x)

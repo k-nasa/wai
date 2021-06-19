@@ -2,6 +2,21 @@ pub trait FromLe {
     fn from_le_bytes(b: &[u8]) -> Self;
 }
 
+impl FromLe for u8 {
+    fn from_le_bytes(byte: &[u8]) -> Self {
+        let mut b: [u8; 1] = Default::default();
+        b.copy_from_slice(&byte[0..1]);
+        Self::from_le_bytes(b)
+    }
+}
+impl FromLe for u16 {
+    fn from_le_bytes(byte: &[u8]) -> Self {
+        let mut b: [u8; 2] = Default::default();
+        b.copy_from_slice(&byte[0..2]);
+        Self::from_le_bytes(b)
+    }
+}
+
 impl FromLe for u32 {
     fn from_le_bytes(byte: &[u8]) -> Self {
         let mut b: [u8; 4] = Default::default();

@@ -100,7 +100,7 @@ impl Runtime {
                 Instruction::F64Load(offset, align) => self.load::<f64>(offset, align)?,
 
                 Instruction::I32Load8S(offset, align) => self.load::<i32>(offset, align)?,
-                Instruction::I32Load8U(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I32Load8U(offset, align) => self.load::<u8>(offset, align)?,
                 Instruction::I32Load16S(offset, align) => self.load::<i32>(offset, align)?,
                 Instruction::I32Load16U(offset, align) => self.load::<i32>(offset, align)?,
 
@@ -522,4 +522,19 @@ impl Runtime {
 
         Ok(())
     }
+
+    // fn load_extend<T, U>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
+    // where
+    //     T: FromLe,
+    //     U: Into<RuntimeValue>,
+    // {
+    //     let base_addr: u32 = self.value_stack.pop().unwrap().into();
+    //     let addr = base_addr + offset;
+    //
+    //     let result = self.memory.load::<T>(addr as usize)?;
+    //
+    //     self.value_stack.push(result as U);
+    //
+    //     Ok(())
+    // }
 }

@@ -5,7 +5,7 @@ pub struct Memory(Vec<u8>);
 
 impl Memory {
     pub fn new() -> Self {
-        Self(Vec::new())
+        Self(b"abcdefghijklmnopqrstuvwxyz".to_vec())
     }
 
     pub fn load<T>(&self, addr: usize) -> Result<T, RuntimeError>
