@@ -248,8 +248,16 @@ impl<'a> Decoder<'a> {
     }
 
     fn decode_data_section(&mut self, size: u32) -> Result<Section, DecodeError> {
-        let mut custom_section = vec![0; size as usize];
-        self.reader.read_exact(&mut custom_section)?;
+        let mut section = vec![0; size as usize];
+        self.reader.read_exact(&mut section)?;
+
+        // let mut data_section_decoder = Decoder::new(Cursor::new(&section));
+        //
+        // let count = data_section_decoder.decode_ver_uint_n()?;
+        //
+        // for _ in 0..count {
+        //
+        // }
 
         Ok(Section::Data(()))
     }

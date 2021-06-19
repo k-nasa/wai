@@ -4,4 +4,7 @@
     local.get $lhs
     local.get $rhs
     i32.add)
-  (export "add" (func $add)))
+  (export "add" (func $add))
+)
+
+(assert_return (invoke "add" (i32.const 5) (i32.const 10)) (i32.const 15))

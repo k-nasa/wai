@@ -6,6 +6,7 @@ pub enum RuntimeValue {
     I64(i64),
     F32(f32),
     F64(f64),
+    V128(u128),
 }
 
 impl RuntimeValue {
@@ -17,6 +18,7 @@ impl RuntimeValue {
             I64(_) => ValueType::I64,
             F32(_) => ValueType::F32,
             F64(_) => ValueType::F64,
+            _ => unreachable!(),
         }
     }
 }
@@ -29,6 +31,20 @@ impl From<RuntimeValue> for i32 {
             I64(x) => x as i32,
             F32(x) => x as i32,
             F64(x) => x as i32,
+            V128(x) => x as i32,
+        }
+    }
+}
+
+impl From<RuntimeValue> for u32 {
+    fn from(v: RuntimeValue) -> u32 {
+        use RuntimeValue::*;
+        match v {
+            I32(x) => x as u32,
+            I64(x) => x as u32,
+            F32(x) => x as u32,
+            F64(x) => x as u32,
+            V128(x) => x as u32,
         }
     }
 }
@@ -41,6 +57,7 @@ impl From<RuntimeValue> for i64 {
             I64(x) => x as i64,
             F32(x) => x as i64,
             F64(x) => x as i64,
+            V128(x) => x as i64,
         }
     }
 }
@@ -53,6 +70,7 @@ impl From<RuntimeValue> for usize {
             I64(x) => x as usize,
             F32(x) => x as usize,
             F64(x) => x as usize,
+            V128(x) => x as usize,
         }
     }
 }
@@ -65,6 +83,7 @@ impl From<RuntimeValue> for bool {
             I64(x) => x as u32 != 0,
             F32(x) => x as u32 != 0,
             F64(x) => x as u32 != 0,
+            V128(x) => x as u32 != 0,
         }
     }
 }
@@ -76,6 +95,7 @@ impl From<RuntimeValue> for f32 {
             I64(x) => x as f32,
             F32(x) => x as f32,
             F64(x) => x as f32,
+            V128(x) => x as f32,
         }
     }
 }
@@ -88,6 +108,7 @@ impl From<RuntimeValue> for f64 {
             I64(x) => x as f64,
             F32(x) => x as f64,
             F64(x) => x as f64,
+            V128(x) => x as f64,
         }
     }
 }
@@ -95,6 +116,12 @@ impl From<RuntimeValue> for f64 {
 impl From<i32> for RuntimeValue {
     fn from(x: i32) -> Self {
         RuntimeValue::I32(x)
+    }
+}
+
+impl From<u8> for RuntimeValue {
+    fn from(x: u8) -> Self {
+        RuntimeValue::I32(x as i32)
     }
 }
 

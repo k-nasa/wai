@@ -1,7 +1,7 @@
 use crate::decode;
 use crate::types::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Module {
     pub(crate) version: u32,
     pub(crate) custom_section: Option<()>,

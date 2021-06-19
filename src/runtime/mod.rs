@@ -1,8 +1,11 @@
 pub mod error;
+pub mod memory;
 
+use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::RuntimeValue;
 use error::RuntimeError;
+use memory::Memory;
 
 type ValueStack = Vec<RuntimeValue>;
 
@@ -11,6 +14,8 @@ pub struct Runtime {
     instructions: Vec<Instruction>,
 
     value_stack: ValueStack,
+
+    memory: Memory,
 }
 
 impl Runtime {
@@ -19,6 +24,8 @@ impl Runtime {
             instructions,
             pc: 0,
             value_stack: Vec::new(),
+
+            memory: Memory::new(),
         }
     }
 
@@ -86,20 +93,24 @@ impl Runtime {
                 Instruction::TeeLocal(_) => todo!(),
                 Instruction::GetGlobal(_) => todo!(),
                 Instruction::SetGlobal(_) => todo!(),
-                Instruction::I32Load(_, _) => todo!(),
-                Instruction::I64Load(_, _) => todo!(),
-                Instruction::F32Load(_, _) => todo!(),
-                Instruction::F64Load(_, _) => todo!(),
-                Instruction::I32Load8S(_, _) => todo!(),
-                Instruction::I32Load8U(_, _) => todo!(),
-                Instruction::I32Load16S(_, _) => todo!(),
-                Instruction::I32Load16U(_, _) => todo!(),
-                Instruction::I64Load8S(_, _) => todo!(),
-                Instruction::I64Load8U(_, _) => todo!(),
-                Instruction::I64Load16S(_, _) => todo!(),
-                Instruction::I64Load16U(_, _) => todo!(),
-                Instruction::I64Load32S(_, _) => todo!(),
-                Instruction::I64Load32U(_, _) => todo!(),
+
+                Instruction::I32Load(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load(offset, align) => self.load::<i64>(offset, align)?,
+                Instruction::F32Load(offset, align) => self.load::<f32>(offset, align)?,
+                Instruction::F64Load(offset, align) => self.load::<f64>(offset, align)?,
+
+                Instruction::I32Load8S(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I32Load8U(offset, align) => self.load::<u8>(offset, align)?,
+                Instruction::I32Load16S(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I32Load16U(offset, align) => self.load::<i32>(offset, align)?,
+
+                Instruction::I64Load8S(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load8U(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load16S(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load16U(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load32S(offset, align) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load32U(offset, align) => self.load::<i32>(offset, align)?,
+
                 Instruction::I32Store(_, _) => todo!(),
                 Instruction::I64Store(_, _) => todo!(),
                 Instruction::F32Store(_, _) => todo!(),
@@ -498,4 +509,32 @@ impl Runtime {
         let added = a ^ b;
         self.value_stack.push(added.into());
     }
+
+    fn load<T>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
+    where
+        T: Into<RuntimeValue> + FromLe,
+    {
+        let base_addr: u32 = self.value_stack.pop().unwrap().into();
+        let addr = base_addr + offset;
+
+        let result = self.memory.load::<T>(addr as usize)?;
+        self.value_stack.push(result.into());
+
+        Ok(())
+    }
+
+    // fn load_extend<T, U>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
+    // where
+    //     T: FromLe,
+    //     U: Into<RuntimeValue>,
+    // {
+    //     let base_addr: u32 = self.value_stack.pop().unwrap().into();
+    //     let addr = base_addr + offset;
+    //
+    //     let result = self.memory.load::<T>(addr as usize)?;
+    //
+    //     self.value_stack.push(result as U);
+    //
+    //     Ok(())
+    // }
 }
