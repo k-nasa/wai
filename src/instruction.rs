@@ -3,6 +3,9 @@ use crate::types::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Instruction {
+    Proposals,
+    Reserved,
+    Prefix(VerUintN),
     Unreachable,
     Nop,
     Block(BlockType),
@@ -15,7 +18,7 @@ pub enum Instruction {
     BrTable(Vec<VerUintN>, VerUintN),
     Return,
     Call(VerUintN),
-    CallIndirect,
+    CallIndirect(VerUintN, VerUintN),
     Drop,
     Select,
     GetLocal(VerUintN),
@@ -186,7 +189,6 @@ impl From<Opcode> for Instruction {
             Opcode::Else => Else,
             Opcode::End => End,
             Opcode::Return => Return,
-            Opcode::CallIndirect => CallIndirect,
             Opcode::Drop => Drop,
             Opcode::Select => Select,
             Opcode::I32Eqz => I32Eqz,
@@ -312,6 +314,8 @@ impl From<Opcode> for Instruction {
             Opcode::I64ReinterpretF64 => I64ReinterpretF64,
             Opcode::F32ReinterpretI32 => F32ReinterpretI32,
             Opcode::F64ReinterpretI64 => F64ReinterpretI64,
+            Opcode::Proposals => Proposals,
+            Opcode::Reserved => Reserved,
             _ => todo!("{:x?}", opcode),
         }
     }

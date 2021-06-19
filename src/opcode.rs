@@ -176,6 +176,9 @@ pub enum Opcode {
     I64ReinterpretF64,
     F32ReinterpretI32,
     F64ReinterpretI64,
+    Proposals,
+    Reserved,
+    Prefix,
 }
 
 impl TryFrom<u8> for Opcode {
@@ -357,7 +360,36 @@ impl TryFrom<u8> for Opcode {
             0xBD => I64ReinterpretF64,
             0xBE => F32ReinterpretI32,
             0xBF => F64ReinterpretI64,
-            0xFC => unreachable!("this opcode is proposal"),
+
+            0x6 => Reserved,
+            0x7 => Reserved,
+            0x8 => Reserved,
+            0x9 => Reserved,
+            0xA => Reserved,
+
+            0x12 => Reserved,
+            0x13 => Reserved,
+            0x1C => Reserved,
+
+            0x25 => Reserved,
+            0x26 => Reserved,
+
+            0xC0 => Reserved,
+            0xC1 => Reserved,
+            0xC2 => Reserved,
+            0xC3 => Reserved,
+            0xC4 => Reserved,
+
+            0xD0 => Reserved,
+            0xD1 => Reserved,
+            0xD2 => Reserved,
+            0xD3 => Reserved,
+
+            0xFF => Reserved,
+            0xFE => Reserved,
+            0xFD => Reserved,
+            0xFC => Prefix,
+
             opcode => Err(DecodeError::Unexpected(format!(
                 "unexpected opcode {:x}",
                 opcode

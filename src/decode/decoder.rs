@@ -301,7 +301,6 @@ impl<'a> Decoder<'a> {
     fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
         let mut instructions = Vec::new();
         loop {
-            dbg!(&instructions);
             let opcode = match Opcode::try_from(self.read_next()?) {
                 Ok(v) => v,
                 Err(e) => Err(DecodeError::Unexpected(format!(
@@ -342,7 +341,18 @@ impl<'a> Decoder<'a> {
 
                     Instruction::BrTable(target_tables, default_target)
                 }
-                Opcode::CallIndirect => todo!(),
+                Opcode::CallIndirect => {
+                    // let v: u32 = VarUint32::decode(&mut reader)?.into();
+                    // operands.push(Operand::U32(v));
+                    // decoded.push((i, operands));
+                    // // Reserved
+                    // let _ = VarUint32::decode(&mut reader)?;
+
+                    let type_index = self.decode_ver_uint_n()?;
+                    let reserved = self.decode_ver_uint_n()?;
+
+                    Instruction::CallIndirect(type_index, reserved)
+                }
 
                 Opcode::I32Load => Instruction::I32Load(
                     u32::from(self.decode_ver_uint_n()?),
@@ -450,6 +460,7 @@ impl<'a> Decoder<'a> {
                     let v = f64::from_bits(v);
                     Instruction::F64Const(v)
                 }
+                Opcode::Prefix => Instruction::Prefix(self.decode_ver_uint_n()?),
                 _ => Instruction::from(opcode),
             };
 

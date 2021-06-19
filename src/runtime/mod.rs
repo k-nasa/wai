@@ -49,6 +49,10 @@ impl Runtime {
                 continue;
             }
             match instruction {
+                Instruction::Proposals => {}
+                Instruction::Reserved => {}
+                Instruction::Prefix(_) => {}
+
                 Instruction::Unreachable => {} // FIXME とりあえず握りつぶしてしまう。良いハンドリングを行いたい
                 Instruction::Nop => {}
                 Instruction::Block(_) => todo!(),
@@ -72,7 +76,7 @@ impl Runtime {
                 Instruction::BrTable(_, _) => todo!(),
                 Instruction::Return => todo!(),
                 Instruction::Call(_) => todo!(),
-                Instruction::CallIndirect => todo!(),
+                Instruction::CallIndirect(_, _) => todo!(),
                 Instruction::Drop => todo!(),
                 Instruction::Select => todo!(),
                 Instruction::GetLocal(_) => self.value_stack.push(locals.pop().unwrap()),
