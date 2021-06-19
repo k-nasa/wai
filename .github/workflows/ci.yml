@@ -55,8 +55,7 @@ jobs:
       - name: fmt
         run: cargo fmt --all -- --check
 
-fuzzing:
-  build_and_test:
+  fuzzing:
     name: Build and test
     runs-on: ${{ matrix.os }}
     strategy:
