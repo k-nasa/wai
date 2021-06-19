@@ -4,8 +4,8 @@ use crate::runtime::error::RuntimeError;
 pub struct Memory(Vec<u8>);
 
 impl Memory {
-    pub fn new() -> Self {
-        Self(b"abcdefghijklmnopqrstuvwxyz".to_vec())
+    pub fn new(byte: Vec<u8>) -> Self {
+        Self(byte)
     }
 
     pub fn load<T>(&mut self, addr: usize) -> Result<T, RuntimeError>

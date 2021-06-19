@@ -1,5 +1,5 @@
 use crate::module::Module;
-use crate::runtime::{error::RuntimeError, Runtime};
+use crate::runtime::{error::RuntimeError, memory::Memory, Runtime};
 use crate::types::*;
 
 #[derive(Debug)]
@@ -29,8 +29,12 @@ impl Instance {
         let func = self.get_function(index)?;
 
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
+        let init_memory = self.init_memory()?;
+        // dbg!(String::from_utf8(&init_memory));
+        dbg!(&init_memory);
+        let memory = Memory::new(self.init_memory()?);
 
-        let mut runtime = Runtime::new(func.code.clone());
+        let mut runtime = Runtime::new(func.code.clone(), memory);
         let stack = runtime.execute(&args)?;
 
         Ok(stack)
@@ -75,6 +79,16 @@ impl Instance {
         let types = type_section.unwrap().entries.get(*t as usize).unwrap();
 
         Ok(types)
+    }
+
+    fn init_memory(&self) -> Result<Vec<u8>, RuntimeError> {
+        let section = self.module.data_section.as_ref();
+        if section.is_none() {
+            return Ok(vec![]);
+        }
+        let init_memory = section.unwrap().segments.get(0).unwrap().data.clone();
+
+        Ok(init_memory)
     }
 
     fn validate(func_type: &FuncType, args: &[RuntimeValue]) -> Result<(), RuntimeError> {

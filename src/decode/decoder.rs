@@ -259,7 +259,13 @@ impl<'a> Decoder<'a> {
         for _ in 0..count.into() {
             let index = data_section_decoder.decode_ver_uint_n()?;
             let _opcode = data_section_decoder.read_next()?;
+
             let offset = data_section_decoder.decode_ver_uint_n()?;
+
+            // NOTE END命令が入っているので読み飛ばしてしまう
+            // 本来であればopcodeを見て、ENDが来るまでdecodeするのがいいが、その必要性がないので雑に実装する
+            data_section_decoder.read_next()?;
+
             let size = data_section_decoder.decode_ver_uint_n()?;
 
             let data = data_section_decoder.read_byte(usize::from(size))?;

@@ -19,13 +19,13 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub fn new(instructions: Vec<Instruction>) -> Self {
+    pub fn new(instructions: Vec<Instruction>, memory: Memory) -> Self {
         Self {
             instructions,
             pc: 0,
             value_stack: Vec::new(),
 
-            memory: Memory::new(),
+            memory,
         }
     }
 

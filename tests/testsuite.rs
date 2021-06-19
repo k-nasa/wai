@@ -35,10 +35,10 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
                     _ => unreachable!(),
                 };
 
-                let args = args_to_runtime_value(args);
+                let args = value_to_runtime_value(args);
                 let instance = Instance::new(m.clone());
-                let return_values = instance.invoke(&invoke, args.clone())?;
-                let actual = return_value_to_wabt_values(return_values);
+                let actual = instance.invoke(&invoke, args.clone())?;
+                let expected = value_to_runtime_value(expected);
 
                 assert_eq!(
                     expected, actual,
@@ -53,7 +53,7 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn args_to_runtime_value(args: Vec<Value>) -> Vec<RuntimeValue> {
+fn value_to_runtime_value(args: Vec<Value>) -> Vec<RuntimeValue> {
     let values = args
         .iter()
         .map(|arg| match arg {
@@ -62,21 +62,6 @@ fn args_to_runtime_value(args: Vec<Value>) -> Vec<RuntimeValue> {
             Value::F32(v) => RuntimeValue::F32(*v),
             Value::F64(v) => RuntimeValue::F64(*v),
             Value::V128(v) => RuntimeValue::V128(*v),
-        })
-        .collect();
-
-    values
-}
-
-fn return_value_to_wabt_values(runtime_values: Vec<RuntimeValue>) -> Vec<Value> {
-    let values = runtime_values
-        .iter()
-        .map(|runtime_value| match runtime_value {
-            RuntimeValue::I32(v) => Value::I32(*v),
-            RuntimeValue::I64(v) => Value::I64(*v),
-            RuntimeValue::F32(v) => Value::F32(*v),
-            RuntimeValue::F64(v) => Value::F64(*v),
-            RuntimeValue::V128(v) => Value::V128(*v),
         })
         .collect();
 
