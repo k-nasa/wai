@@ -16,7 +16,7 @@ impl Memory {
 
         // NOTE 長さが足りないときは伸ばしてしまう。
         // メモリの最大長は決まっているのでそれ以上は伸びないように制限する必要がある
-        while let None = &self.0.get(addr..addr + size) {
+        while self.0.get(addr..addr + size).is_none() {
             let cap = self.0.capacity();
             self.0.extend(vec![0u8; cap]);
         }
