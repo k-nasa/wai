@@ -1,5 +1,5 @@
 use crate::module::Module;
-use crate::runtime::{error::RuntimeError, memory::Memory, Runtime};
+use crate::runtime::{error::RuntimeError, memory::Memory, Runtime, RuntimeValue};
 use crate::types::*;
 
 #[derive(Debug)]

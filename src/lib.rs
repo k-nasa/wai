@@ -7,5 +7,5 @@ mod opcode;
 mod runtime;
 mod types;
 
-pub use types::RuntimeValue;
+pub use runtime::RuntimeValue;
 pub use {instance::Instance, module::Module};

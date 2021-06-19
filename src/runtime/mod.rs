@@ -1,11 +1,12 @@
 pub mod error;
 pub mod memory;
+pub mod runtime_value;
 
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
-use crate::types::RuntimeValue;
-use error::RuntimeError;
+pub use error::RuntimeError;
 use memory::Memory;
+pub use runtime_value::RuntimeValue;
 
 type ValueStack = Vec<RuntimeValue>;
 
