@@ -529,7 +529,7 @@ impl Runtime {
         self.value_stack.push(added.into());
     }
 
-    fn load<T>(&mut self, offset: u32, align: u32) -> Result<(), RuntimeError>
+    fn load<T>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
     where
         T: Into<RuntimeValue> + FromLe,
     {
@@ -542,7 +542,7 @@ impl Runtime {
         Ok(())
     }
 
-    fn load_extend<T, U>(&mut self, offset: u32, align: u32) -> Result<(), RuntimeError>
+    fn load_extend<T, U>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
     where
         T: FromLe,
         U: Into<RuntimeValue> + From<T>,
@@ -550,7 +550,6 @@ impl Runtime {
         let base_addr: u32 = self.value_stack.pop().unwrap().into();
         let addr = base_addr + offset;
 
-        dbg!(base_addr, offset, align);
         let result = self.memory.load::<T>(addr as usize)?;
 
         self.value_stack.push(U::from(result).into());
