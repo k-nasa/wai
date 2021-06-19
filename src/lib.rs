@@ -1,4 +1,5 @@
 mod decode;
+mod from_le;
 mod instance;
 mod instruction;
 mod module;

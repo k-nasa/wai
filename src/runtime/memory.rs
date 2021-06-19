@@ -1,3 +1,4 @@
+use crate::from_le::FromLe;
 use crate::runtime::error::RuntimeError;
 use crate::types::RuntimeValue;
 
@@ -8,10 +9,13 @@ impl Memory {
         Self(Vec::new())
     }
 
-    pub fn load<T>(&self, addr: u32) -> Result<RuntimeValue, RuntimeError>
+    pub fn load<T>(&self, addr: usize) -> Result<T, RuntimeError>
     where
-        T: From<RuntimeValue>,
+        T: Into<RuntimeValue> + FromLe,
     {
-        todo!()
+        let size = std::mem::size_of::<T>();
+        let buf = &self.0[addr..addr + size];
+
+        Ok(T::from_le_bytes(buf))
     }
 }
