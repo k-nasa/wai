@@ -1,5 +1,5 @@
 mod decoder;
-mod error;
+pub mod error;
 
 use decoder::Decoder;
 pub use error::DecodeError;

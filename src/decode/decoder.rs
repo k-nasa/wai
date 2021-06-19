@@ -3,6 +3,7 @@ use crate::instruction::Instruction;
 use crate::module::{Section, SectionType};
 use crate::opcode::Opcode;
 use crate::types::*;
+use std::convert::TryFrom;
 use std::io::Cursor;
 use std::io::Read;
 
@@ -95,7 +96,7 @@ impl<'a> Decoder<'a> {
         for _ in 0..entry_count.into() {
             let func_type = type_section_decoder.read_next()?;
             if func_type != FUNC_TYPE {
-                return Err(DecodeError::Unexpected);
+                return Err(DecodeError::Unexpected(String::new()));
             }
 
             let mut func_type = FuncType {
@@ -258,9 +259,9 @@ impl<'a> Decoder<'a> {
         let mut i = 0;
         loop {
             let bytes = u32::from(self.read_next()?);
-            value += (bytes & 0x7f)
-                .checked_shl(i * 7)
-                .ok_or(DecodeError::InvalidNumeric)?;
+            value += (bytes & 0x7f).checked_shl(i * 7).ok_or_else(|| {
+                DecodeError::InvalidNumeric(format!("value is {}, byte is {:x}", value, bytes))
+            })?;
 
             i += 1;
 
@@ -268,13 +269,42 @@ impl<'a> Decoder<'a> {
                 break;
             }
         }
+
         Ok(VerUintN::from(value))
+    }
+
+    fn decode_i64(&mut self) -> Result<i64, DecodeError> {
+        let mut value = 0;
+        let mut i = 0;
+        loop {
+            let bytes = i64::from(self.read_next()?);
+            value += (bytes & 0x7f).checked_shl(i * 7).ok_or_else(|| {
+                DecodeError::InvalidNumeric(format!("value is {}, byte is {:x}", value, bytes))
+            })?;
+
+            i += 1;
+
+            if bytes & 0x80 == 0 {
+                break;
+            }
+        }
+
+        Ok(value)
     }
 
     fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
         let mut instructions = Vec::new();
         loop {
-            let opcode = Opcode::from(self.read_next()?);
+            let opcode = match Opcode::try_from(self.read_next()?) {
+                Ok(v) => v,
+                Err(e) => {
+                    return Err(DecodeError::Unexpected(format!(
+                        "error: {}\nnow decoded instructions is {:?}",
+                        e, instructions
+                    )))
+                }
+            };
+
             if self.is_end() {
                 break;
             }
@@ -297,8 +327,28 @@ impl<'a> Decoder<'a> {
                 Opcode::CurrentMemory => Instruction::CurrentMemory(self.decode_ver_uint_n()?),
                 Opcode::GrowMemory => Instruction::GrowMemory(self.decode_ver_uint_n()?),
 
-                Opcode::BrTable => todo!(),
-                Opcode::CallIndirect => todo!(),
+                Opcode::BrTable => {
+                    let target_count = self.decode_ver_uint_n()?;
+                    let mut target_tables = vec![];
+                    for _ in 0..u32::from(target_count) {
+                        target_tables.push(self.decode_ver_uint_n()?);
+                    }
+                    let default_target = self.decode_ver_uint_n()?;
+
+                    Instruction::BrTable(target_tables, default_target)
+                }
+                Opcode::CallIndirect => {
+                    // let v: u32 = VarUint32::decode(&mut reader)?.into();
+                    // operands.push(Operand::U32(v));
+                    // decoded.push((i, operands));
+                    // // Reserved
+                    // let _ = VarUint32::decode(&mut reader)?;
+
+                    let type_index = self.decode_ver_uint_n()?;
+                    let reserved = self.decode_ver_uint_n()?;
+
+                    Instruction::CallIndirect(type_index, reserved)
+                }
 
                 Opcode::I32Load => Instruction::I32Load(
                     u32::from(self.decode_ver_uint_n()?),
@@ -394,9 +444,19 @@ impl<'a> Decoder<'a> {
                 ),
 
                 Opcode::I32Const => Instruction::I32Const(i32::from(self.decode_ver_uint_n()?)),
-                Opcode::I64Const => Instruction::I64Const(i64::from(self.decode_ver_uint_n()?)),
-                Opcode::F32Const => Instruction::F32Const(f32::from(self.decode_ver_uint_n()?)),
-                Opcode::F64Const => Instruction::F64Const(f64::from(self.decode_ver_uint_n()?)),
+                Opcode::I64Const => Instruction::I64Const(self.decode_i64()?),
+                Opcode::F32Const => {
+                    let v = self.read_u32()?;
+                    let v = f32::from_bits(v);
+                    Instruction::F32Const(v)
+                }
+
+                Opcode::F64Const => {
+                    let v = self.read_u64()?;
+                    let v = f64::from_bits(v);
+                    Instruction::F64Const(v)
+                }
+                Opcode::Prefix => Instruction::Prefix(self.decode_ver_uint_n()?),
                 _ => Instruction::from(opcode),
             };
 
@@ -407,7 +467,7 @@ impl<'a> Decoder<'a> {
     }
 
     fn read_next(&mut self) -> Result<u8, DecodeError> {
-        let mut buf = [0; 1];
+        let mut buf = [0u8; 1];
         self.reader.read_exact(&mut buf)?;
 
         Ok(buf[0])
@@ -418,6 +478,22 @@ impl<'a> Decoder<'a> {
         self.reader.read_exact(&mut buf)?;
 
         Ok(buf)
+    }
+
+    pub fn read_u32(&mut self) -> Result<u32, DecodeError> {
+        Ok(self
+            .read_byte(4)?
+            .iter()
+            .rev()
+            .fold(0, |x, &i| x << 8 | u32::from(i)))
+    }
+
+    pub fn read_u64(&mut self) -> Result<u64, DecodeError> {
+        Ok(self
+            .read_byte(8)?
+            .iter()
+            .rev()
+            .fold(0, |x, &i| x << 8 | u64::from(i)))
     }
 
     // fn read_to_end(&mut self) -> Result<Vec<u8>, DecodeError> {
