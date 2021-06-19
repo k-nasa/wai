@@ -11,7 +11,7 @@ macro_rules! wasm_test {
     };
 }
 
-wasm_test!(add, "./wasm/wat/add.wat");
+wasm_test!(add, "./wat/add.wat");
 wasm_test!(address, "./testsuite/address.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {

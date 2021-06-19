@@ -1,8 +1,10 @@
 pub mod error;
+pub mod memory;
 
 use crate::instruction::Instruction;
 use crate::types::RuntimeValue;
 use error::RuntimeError;
+use memory::Memory;
 
 type ValueStack = Vec<RuntimeValue>;
 
@@ -11,6 +13,8 @@ pub struct Runtime {
     instructions: Vec<Instruction>,
 
     value_stack: ValueStack,
+
+    memory: Memory,
 }
 
 impl Runtime {
@@ -19,6 +23,8 @@ impl Runtime {
             instructions,
             pc: 0,
             value_stack: Vec::new(),
+
+            memory: Memory::new(),
         }
     }
 
@@ -497,5 +503,19 @@ impl Runtime {
         let (a, b) = self.pop_lr::<T>();
         let added = a ^ b;
         self.value_stack.push(added.into());
+    }
+
+    fn load<T>(&mut self, offset: u32, _align: u32) -> Result<(), RuntimeError>
+    where
+        T: From<RuntimeValue> + std::ops::BitXor<Output = T> + Into<RuntimeValue>,
+    {
+        let base_addr: u32 = self.value_stack.pop().unwrap().into();
+
+        let addr = base_addr + offset;
+
+        let result = self.memory.load::<T>(addr)?;
+        self.value_stack.push(result);
+
+        Ok(())
     }
 }
