@@ -94,39 +94,39 @@ impl Runtime {
                 Instruction::GetGlobal(_) => todo!(),
                 Instruction::SetGlobal(_) => todo!(),
 
-                Instruction::I32Load(offset, align) => self.load::<i32>(offset, align)?,
-                Instruction::I64Load(offset, align) => self.load::<i64>(offset, align)?,
-                Instruction::F32Load(offset, align) => self.load::<f32>(offset, align)?,
-                Instruction::F64Load(offset, align) => self.load::<f64>(offset, align)?,
+                Instruction::I32Load(align, offset) => self.load::<i32>(offset, align)?,
+                Instruction::I64Load(align, offset) => self.load::<i64>(offset, align)?,
+                Instruction::F32Load(align, offset) => self.load::<f32>(offset, align)?,
+                Instruction::F64Load(align, offset) => self.load::<f64>(offset, align)?,
 
-                Instruction::I32Load8S(offset, align) => {
+                Instruction::I32Load8S(align, offset) => {
                     self.load_extend::<u8, i32>(offset, align)?
                 }
-                Instruction::I32Load8U(offset, align) => {
+                Instruction::I32Load8U(align, offset) => {
                     self.load_extend::<u8, i32>(offset, align)?
                 }
-                Instruction::I32Load16S(offset, align) => {
+                Instruction::I32Load16S(align, offset) => {
                     self.load_extend::<u16, i32>(offset, align)?
                 }
-                Instruction::I32Load16U(offset, align) => {
+                Instruction::I32Load16U(align, offset) => {
                     self.load_extend::<u16, i32>(offset, align)?
                 }
-                Instruction::I64Load8S(offset, align) => {
+                Instruction::I64Load8S(align, offset) => {
                     self.load_extend::<u8, i64>(offset, align)?
                 }
-                Instruction::I64Load8U(offset, align) => {
+                Instruction::I64Load8U(align, offset) => {
                     self.load_extend::<u8, i64>(offset, align)?
                 }
-                Instruction::I64Load16S(offset, align) => {
-                    self.load_extend::<u16, i32>(offset, align)?
+                Instruction::I64Load16S(align, offset) => {
+                    self.load_extend::<u16, i64>(offset, align)?
                 }
-                Instruction::I64Load16U(offset, align) => {
-                    self.load_extend::<u16, i32>(offset, align)?
+                Instruction::I64Load16U(align, offset) => {
+                    self.load_extend::<u16, i64>(offset, align)?
                 }
-                Instruction::I64Load32S(offset, align) => {
+                Instruction::I64Load32S(align, offset) => {
                     self.load_extend::<u32, i64>(offset, align)?
                 }
-                Instruction::I64Load32U(offset, align) => {
+                Instruction::I64Load32U(align, offset) => {
                     self.load_extend::<u32, i64>(offset, align)?
                 }
 
@@ -534,7 +534,7 @@ impl Runtime {
         T: Into<RuntimeValue> + FromLe,
     {
         let base_addr: u32 = self.value_stack.pop().unwrap().into();
-        let addr = base_addr + offset + align;
+        let addr = base_addr + offset;
 
         let result = self.memory.load::<T>(addr as usize)?;
         self.value_stack.push(result.into());
@@ -548,7 +548,7 @@ impl Runtime {
         U: Into<RuntimeValue> + From<T>,
     {
         let base_addr: u32 = self.value_stack.pop().unwrap().into();
-        let addr = base_addr + offset + align;
+        let addr = base_addr + offset;
 
         dbg!(base_addr, offset, align);
         let result = self.memory.load::<T>(addr as usize)?;
