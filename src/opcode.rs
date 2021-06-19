@@ -357,6 +357,7 @@ impl TryFrom<u8> for Opcode {
             0xBD => I64ReinterpretF64,
             0xBE => F32ReinterpretI32,
             0xBF => F64ReinterpretI64,
+            0xFC => unreachable!("this opcode is proposal"),
             opcode => Err(DecodeError::Unexpected(format!(
                 "unexpected opcode {:x}",
                 opcode

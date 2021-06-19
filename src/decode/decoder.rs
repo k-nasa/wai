@@ -261,7 +261,10 @@ impl<'a> Decoder<'a> {
             let bytes = u32::from(self.read_next()?);
             value += (bytes & 0x7f)
                 .checked_shl(i * 7)
-                .ok_or(DecodeError::InvalidNumeric)?;
+                .ok_or(DecodeError::InvalidNumeric(format!(
+                    "value is {}, byte is {:x}",
+                    value, bytes
+                )))?;
 
             i += 1;
 
@@ -270,13 +273,35 @@ impl<'a> Decoder<'a> {
             }
         }
 
-        dbg!(format!("decode_ver_uint_n byte {}, hex {:x}", value, value));
         Ok(VerUintN::from(value))
+    }
+
+    fn decode_i64(&mut self) -> Result<i64, DecodeError> {
+        let mut value = 0;
+        let mut i = 0;
+        loop {
+            let bytes = i64::from(self.read_next()?);
+            value += (bytes & 0x7f)
+                .checked_shl(i * 7)
+                .ok_or(DecodeError::InvalidNumeric(format!(
+                    "value is {}, byte is {:x}",
+                    value, bytes
+                )))?;
+
+            i += 1;
+
+            if bytes & 0x80 == 0 {
+                break;
+            }
+        }
+
+        Ok(value)
     }
 
     fn decode_function_body(&mut self) -> Result<Vec<Instruction>, DecodeError> {
         let mut instructions = Vec::new();
         loop {
+            dbg!(&instructions);
             let opcode = match Opcode::try_from(self.read_next()?) {
                 Ok(v) => v,
                 Err(e) => Err(DecodeError::Unexpected(format!(
@@ -413,9 +438,18 @@ impl<'a> Decoder<'a> {
                 ),
 
                 Opcode::I32Const => Instruction::I32Const(i32::from(self.decode_ver_uint_n()?)),
-                Opcode::I64Const => Instruction::I64Const(i64::from(self.decode_ver_uint_n()?)),
-                Opcode::F32Const => Instruction::F32Const(f32::from(self.decode_ver_uint_n()?)),
-                Opcode::F64Const => Instruction::F64Const(f64::from(self.decode_ver_uint_n()?)),
+                Opcode::I64Const => Instruction::I64Const(self.decode_i64()?),
+                Opcode::F32Const => {
+                    let v = self.read_u32()?;
+                    let v = f32::from_bits(v);
+                    Instruction::F32Const(v)
+                }
+
+                Opcode::F64Const => {
+                    let v = self.read_u64()?;
+                    let v = f64::from_bits(v);
+                    Instruction::F64Const(v)
+                }
                 _ => Instruction::from(opcode),
             };
 
@@ -429,7 +463,6 @@ impl<'a> Decoder<'a> {
         let mut buf = [0u8; 1];
         self.reader.read_exact(&mut buf)?;
 
-        dbg!(format!("read_next byte {}, hex {:x}", buf[0], buf[0]));
         Ok(buf[0])
     }
 
@@ -438,6 +471,22 @@ impl<'a> Decoder<'a> {
         self.reader.read_exact(&mut buf)?;
 
         Ok(buf)
+    }
+
+    pub fn read_u32(&mut self) -> Result<u32, DecodeError> {
+        Ok(self
+            .read_byte(4)?
+            .iter()
+            .rev()
+            .fold(0, |x, &i| x << 8 | u32::from(i)))
+    }
+
+    pub fn read_u64(&mut self) -> Result<u64, DecodeError> {
+        Ok(self
+            .read_byte(8)?
+            .iter()
+            .rev()
+            .fold(0, |x, &i| x << 8 | u64::from(i)))
     }
 
     // fn read_to_end(&mut self) -> Result<Vec<u8>, DecodeError> {
