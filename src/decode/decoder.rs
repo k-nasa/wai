@@ -259,12 +259,9 @@ impl<'a> Decoder<'a> {
         let mut i = 0;
         loop {
             let bytes = u32::from(self.read_next()?);
-            value += (bytes & 0x7f)
-                .checked_shl(i * 7)
-                .ok_or(DecodeError::InvalidNumeric(format!(
-                    "value is {}, byte is {:x}",
-                    value, bytes
-                )))?;
+            value += (bytes & 0x7f).checked_shl(i * 7).ok_or_else(|| {
+                DecodeError::InvalidNumeric(format!("value is {}, byte is {:x}", value, bytes))
+            })?;
 
             i += 1;
 
@@ -281,12 +278,9 @@ impl<'a> Decoder<'a> {
         let mut i = 0;
         loop {
             let bytes = i64::from(self.read_next()?);
-            value += (bytes & 0x7f)
-                .checked_shl(i * 7)
-                .ok_or(DecodeError::InvalidNumeric(format!(
-                    "value is {}, byte is {:x}",
-                    value, bytes
-                )))?;
+            value += (bytes & 0x7f).checked_shl(i * 7).ok_or_else(|| {
+                DecodeError::InvalidNumeric(format!("value is {}, byte is {:x}", value, bytes))
+            })?;
 
             i += 1;
 
@@ -303,10 +297,12 @@ impl<'a> Decoder<'a> {
         loop {
             let opcode = match Opcode::try_from(self.read_next()?) {
                 Ok(v) => v,
-                Err(e) => Err(DecodeError::Unexpected(format!(
-                    "error: {}\nnow decoded instructions is {:?}",
-                    e, instructions
-                )))?,
+                Err(e) => {
+                    return Err(DecodeError::Unexpected(format!(
+                        "error: {}\nnow decoded instructions is {:?}",
+                        e, instructions
+                    )))
+                }
             };
 
             if self.is_end() {

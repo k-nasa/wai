@@ -388,10 +388,12 @@ impl TryFrom<u8> for Opcode {
             0xFD => Reserved,
             0xFC => Prefix,
 
-            opcode => Err(DecodeError::Unexpected(format!(
-                "unexpected opcode {:x}",
-                opcode
-            )))?,
+            opcode => {
+                return Err(DecodeError::Unexpected(format!(
+                    "unexpected opcode {:x}",
+                    opcode
+                )))
+            }
         };
 
         Ok(opcode)
