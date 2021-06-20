@@ -33,8 +33,5 @@ fn main() -> anyhow::Result<()> {
     let values = instance.invoke(&opts.invoke, vec![RuntimeValue::I32(1)])?;
     log::info!("return value is {:?}", values);
 
-    let values = instance.invoke(&opts.invoke, vec![RuntimeValue::I32(0)])?;
-    log::info!("return value is {:?}", values);
-
     Ok(())
 }

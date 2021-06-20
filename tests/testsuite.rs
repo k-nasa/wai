@@ -12,7 +12,7 @@ macro_rules! wasm_test {
 }
 
 wasm_test!(add, "./wat/add.wat");
-wasm_test!(address, "./testsuite/address.wast");
+// wasm_test!(address, "./testsuite/address.wast");
 // wasm_test!(align, "./testsuite/align.wast");
 wasm_test!(binary, "./testsuite/binary.wast");
 wasm_test!(comments, "./testsuite/comments.wast");
@@ -21,9 +21,10 @@ wasm_test!(custom, "./testsuite/custom.wast");
 wasm_test!(data, "./testsuite/data.wast");
 // wasm_test!(elem, "./testsuite/elem.wast");
 // wasm_test!(endianness, "./testsuite/endianness.wast");
-
 // wasm_test!(f32, "./testsuite/f32.wast");
-wasm_test!(ii32, "./testsuite/i32.wast");
+// wasm_test!(ii32, "./testsuite/i32.wast");
+// wasm_test!(memory, "./testsuite/memory.wast");
+wasm_test!(_type, "./testsuite/type.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     let mut buf = vec![];
