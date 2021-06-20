@@ -61,11 +61,3 @@ impl FromLe for f64 {
         Self::from_le_bytes(b)
     }
 }
-
-impl FromLe for usize {
-    fn from_le_bytes(byte: &[u8]) -> Self {
-        let mut b: [u8; 8] = Default::default();
-        b.copy_from_slice(&byte[0..8]);
-        Self::from_le_bytes(b)
-    }
-}
