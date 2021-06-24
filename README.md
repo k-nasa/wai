@@ -44,7 +44,7 @@ OPTIONS:
 
 ## Licence
 
-[MIT](https://github.com/k-nasa/wasmi/blob/master/LICENCE)
+[MIT](https://github.com/k-nasa/wasmi/blob/master/LICENSE)
 
 ## Author
 
