@@ -95,7 +95,6 @@ pub enum BlockType {
     F32,
     F64,
     Empty,
-    Unknown,
 }
 
 impl From<u8> for BlockType {
@@ -108,7 +107,7 @@ impl From<u8> for BlockType {
             0x03 => F32,
             0x04 => F64,
             0x40 => Empty,
-            _ => Unknown,
+            _ => unreachable!(),
         }
     }
 }
