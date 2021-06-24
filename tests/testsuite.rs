@@ -48,6 +48,16 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
                 let expected: Vec<RuntimeValue> =
                     results.iter().map(result_to_runtime_value).collect();
 
+                let actual = actual
+                    .iter()
+                    .map(to_zero_nan)
+                    .collect::<Vec<RuntimeValue>>();
+
+                let expected = expected
+                    .iter()
+                    .map(to_zero_nan)
+                    .collect::<Vec<RuntimeValue>>();
+
                 assert_eq!(
                     expected, actual,
                     "\n=====failed assert {}=====\nargs:{:#?}\nexpect {:#?}, return value {:#?}",
@@ -59,6 +69,14 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+fn to_zero_nan(v: &RuntimeValue) -> RuntimeValue {
+    match v {
+        RuntimeValue::F32(v) if v.is_nan() => RuntimeValue::F32(0.0),
+        RuntimeValue::F64(v) if v.is_nan() => RuntimeValue::F64(0.0),
+        v => *v,
+    }
 }
 
 fn args_to_runtime_value(expr: &wast::Expression) -> RuntimeValue {
