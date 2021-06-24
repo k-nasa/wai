@@ -25,6 +25,11 @@ jobs:
           toolchain: ${{ matrix.rust }}
           override: true
 
+      - name: init
+        run: |
+          git submodule update --init --recursive
+
+
       - name: build
         uses: actions-rs/cargo@master
         with:
