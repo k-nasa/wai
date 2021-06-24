@@ -1,4 +1,6 @@
 use crate::types::ValueType;
+use core::num::ParseIntError;
+use core::str::FromStr;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RuntimeValue {
@@ -140,5 +142,14 @@ impl From<f32> for RuntimeValue {
 impl From<f64> for RuntimeValue {
     fn from(x: f64) -> Self {
         RuntimeValue::F64(x)
+    }
+}
+
+impl FromStr for RuntimeValue {
+    type Err = ParseIntError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let num: i32 = s.parse()?;
+        Ok(RuntimeValue::I32(num))
     }
 }

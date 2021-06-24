@@ -13,6 +13,9 @@ struct Opts {
 
     #[clap(short, long)]
     invoke: String,
+
+    #[clap(short, long)]
+    args: Vec<RuntimeValue>,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -25,12 +28,10 @@ fn main() -> anyhow::Result<()> {
     let bytes = std::fs::read(filename)?;
 
     let m = Module::from_byte(bytes)?;
-    log::debug!("module: {:#?}", m);
-
     let instance = Instance::new(m);
 
     // TODO implement custom argument
-    let values = instance.invoke(&opts.invoke, vec![RuntimeValue::I32(1)])?;
+    let values = instance.invoke(&opts.invoke, opts.args)?;
     log::info!("return value is {:?}", values);
 
     Ok(())
