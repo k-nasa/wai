@@ -1,6 +1,6 @@
 use std::io::Read;
-use wabt::script::{Action, Command, CommandKind, ScriptParser, Value};
 use wasmi::*;
+use wast::WastDirective;
 
 macro_rules! wasm_test {
     ($func:ident, $path:expr) => {
@@ -32,30 +32,32 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     file.read_to_end(&mut buf)?;
     let wast = String::from_utf8(buf).unwrap();
 
-    let mut parser = ScriptParser::from_str(&wast).unwrap();
+    let buf = wast::parser::ParseBuffer::new(&wast)?;
+    let wast = wast::parser::parse::<wast::Wast>(&buf)?;
 
     let mut m = Module::default();
-    while let Some(Command { kind, .. }) = parser.next()? {
-        match kind {
-            CommandKind::Module { module, .. } => {
-                let module_binary = module.into_vec();
+    for directive in wast.directives {
+        match directive {
+            WastDirective::Module(mut module) => {
+                let module_binary = module.encode()?;
                 m = Module::from_byte(module_binary)?;
             }
-            CommandKind::AssertReturn { action, expected } => {
-                let (invoke, args) = match action {
-                    Action::Invoke { field, args, .. } => (field, args),
+            WastDirective::AssertReturn { exec, results, .. } => {
+                let (name, args) = match exec {
+                    wast::WastExecute::Invoke(invoke) => (invoke.name, invoke.args),
                     _ => unreachable!(),
                 };
 
-                let args = value_to_runtime_value(args);
+                let args: Vec<RuntimeValue> = args.iter().map(args_to_runtime_value).collect();
                 let instance = Instance::new(m.clone());
-                let actual = instance.invoke(&invoke, args.clone())?;
-                let expected = value_to_runtime_value(expected);
+                let actual = instance.invoke(&name, args.clone())?;
+                let expected: Vec<RuntimeValue> =
+                    results.iter().map(result_to_runtime_value).collect();
 
                 assert_eq!(
                     expected, actual,
                     "\n=====failed assert {}=====\nargs:{:#?}\nexpect {:#?}, return value {:#?}",
-                    invoke, args, expected, actual
+                    name, args, expected, actual
                 );
             }
             _ => {}
@@ -65,17 +67,38 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     Ok(())
 }
 
-fn value_to_runtime_value(args: Vec<Value>) -> Vec<RuntimeValue> {
-    let values = args
-        .iter()
-        .map(|arg| match arg {
-            Value::I32(v) => RuntimeValue::I32(*v),
-            Value::I64(v) => RuntimeValue::I64(*v),
-            Value::F32(v) => RuntimeValue::F32(*v),
-            Value::F64(v) => RuntimeValue::F64(*v),
-            Value::V128(v) => RuntimeValue::V128(*v),
-        })
-        .collect();
+fn args_to_runtime_value(expr: &wast::Expression) -> RuntimeValue {
+    match &expr.instrs[0] {
+        wast::Instruction::I32Const(x) => RuntimeValue::I32(*x),
+        wast::Instruction::I64Const(x) => RuntimeValue::I64(*x),
+        wast::Instruction::F32Const(x) => RuntimeValue::F32(f32::from_bits(x.bits)),
+        wast::Instruction::F64Const(x) => RuntimeValue::F64(f64::from_bits(x.bits)),
+        _ => unreachable!(),
+    }
+}
 
-    values
+fn result_to_runtime_value(expr: &wast::AssertExpression) -> RuntimeValue {
+    match expr {
+        wast::AssertExpression::I32(x) => RuntimeValue::I32(*x),
+        wast::AssertExpression::I64(x) => RuntimeValue::I64(*x),
+        wast::AssertExpression::F32(x) => RuntimeValue::F32(to_f32(x)),
+        wast::AssertExpression::F64(x) => RuntimeValue::F64(to_f64(x)),
+        _ => unreachable!(),
+    }
+}
+
+fn to_f64(expr: &wast::NanPattern<wast::Float64>) -> f64 {
+    match expr {
+        &wast::NanPattern::CanonicalNan => 0.0,
+        &wast::NanPattern::ArithmeticNan => 0.0,
+        wast::NanPattern::Value(f) => f64::from_bits(f.bits),
+    }
+}
+
+fn to_f32(expr: &wast::NanPattern<wast::Float32>) -> f32 {
+    match expr {
+        &wast::NanPattern::CanonicalNan => 0.0,
+        &wast::NanPattern::ArithmeticNan => 0.0,
+        wast::NanPattern::Value(f) => f32::from_bits(f.bits),
+    }
 }
