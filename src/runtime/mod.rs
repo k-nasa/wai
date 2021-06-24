@@ -1,10 +1,12 @@
 pub mod error;
+mod label_stack;
 pub mod memory;
 pub mod runtime_value;
 
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 pub use error::RuntimeError;
+use label_stack::LabelStack;
 use memory::Memory;
 pub use runtime_value::RuntimeValue;
 
@@ -15,6 +17,7 @@ pub struct Runtime {
     instructions: Vec<Instruction>,
 
     value_stack: ValueStack,
+    label_stack: LabelStack,
 
     memory: Memory,
 }
@@ -25,6 +28,7 @@ impl Runtime {
             instructions,
             pc: 0,
             value_stack: Vec::new(),
+            label_stack: Vec::new(),
 
             memory,
         }
