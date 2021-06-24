@@ -6,7 +6,7 @@ pub mod runtime_value;
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 pub use error::RuntimeError;
-use label_stack::LabelStack;
+use label_stack::{Label, LabelStack};
 use memory::Memory;
 pub use runtime_value::RuntimeValue;
 
@@ -66,7 +66,10 @@ impl Runtime {
 
                 Instruction::Unreachable => {} // FIXME とりあえず握りつぶしてしまう。良いハンドリングを行いたい
                 Instruction::Nop => {}
-                Instruction::Block(_) => todo!(),
+                Instruction::Block(result_type) => {
+                    self.label_stack
+                        .push(Label::new_block(self.pc, result_type));
+                }
                 Instruction::Loop(_) => todo!(),
                 Instruction::If(_block_type) => {
                     if self.value_stack.is_empty() {

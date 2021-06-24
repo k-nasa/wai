@@ -19,6 +19,7 @@ wasm_test!(consts, "./testsuite/const.wast");
 wasm_test!(custom, "./testsuite/custom.wast");
 wasm_test!(data, "./testsuite/data.wast");
 wasm_test!(_type, "./testsuite/type.wast");
+wasm_test!(block, "./testsuite/block.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     let mut buf = vec![];
@@ -45,9 +46,9 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
                 let args: Vec<RuntimeValue> = args.iter().map(args_to_runtime_value).collect();
                 let instance = Instance::new(m.clone());
                 let actual = instance.invoke(&name, args.clone())?;
+
                 let expected: Vec<RuntimeValue> =
                     results.iter().map(result_to_runtime_value).collect();
-
                 let actual = actual
                     .iter()
                     .map(to_zero_nan)
