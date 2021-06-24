@@ -1,0 +1,84 @@
+#!/bin/bash
+# This script is used for release binary
+# Usage: ./release version GITHUB_TOKEN
+
+
+info () {
+  printf "\r  [ \033[00;34mINFO\033[0m ] $1\n"
+}
+
+success () {
+  printf "\r\033[2K  [  \033[00;32mOK\033[0m  ] $1\n"
+}
+
+install_cross() {
+  cross --version > /dev/null
+  if [ $? -ne 0 ]; then
+    info 'cross not found. try install cross'
+
+    cargo install cross
+
+    success "success install cross"
+  else
+    info "cross already installed"
+  fi
+}
+
+install_rgh() {
+  rgh --version > /dev/null
+  if  [ $? -ne 0 ]; then
+    info 'rgh not found. try install rgh'
+
+    cargo install rgh
+
+    success "success install rgh"
+  else
+    info "rgh already installed"
+  fi
+}
+
+build_all() {
+  rm -rf dist/
+
+  build x86_64-apple-darwin wasmi
+  build x86_64-unknown-linux-gnu wasmi
+}
+
+build() {
+  CRATE_NAME=wasmi
+  MISC="README.md LICENSE"
+
+  TARGET=$1
+  BIN_NAME=$2
+  DIRNAME=${CRATE_NAME}_${TARGET}
+
+  info "start build ${TARGET} ${BIN_NAME}"
+
+	cross build --target ${TARGET} --release
+	mkdir -p ${DIRNAME}
+	\
+	cp ./target/${TARGET}/release/${BIN_NAME} ${DIRNAME}
+	cp ${MISC} ${DIRNAME}
+	\
+	mkdir -p dist
+	tar czf dist/${DIRNAME}.tar.gz ${DIRNAME}
+	rm -rf ${DIRNAME}
+
+  success "success build ${TARGET} ${BIN_NAME}"
+}
+
+release() {
+  VERSION=$1
+  GITHUB_TOKEN=$2
+  rgh $VERSION ./dist --token $GITHUB_TOKEN
+}
+
+main() {
+  install_cross
+  install_rgh
+
+  build_all
+  release $1 $2
+}
+
+main $1 $2

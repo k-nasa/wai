@@ -1,0 +1,16 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version'
+        required: true
+
+jobs:
+  release:
+    runs-on: [macos-latest]
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Release
+      run: ./script/release ${{ github.event.inputs.version }}  ${{ secrets.GITHUB_TOKEN }}
