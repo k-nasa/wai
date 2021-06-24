@@ -29,9 +29,6 @@ impl Instance {
         let func = self.get_function(index)?;
 
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
-        let init_memory = self.init_memory()?;
-        // dbg!(String::from_utf8(&init_memory));
-        dbg!(&init_memory);
         let memory = Memory::new(self.init_memory()?);
 
         let mut runtime = Runtime::new(func.code.clone(), memory);
