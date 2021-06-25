@@ -1,6 +1,5 @@
 use crate::runtime::RuntimeError;
 use crate::runtime::RuntimeValue;
-use crate::types::*;
 
 pub struct ActivationStack(Vec<Activation>);
 
@@ -60,6 +59,10 @@ impl ActivationStack {
         Ok(())
     }
 
+    pub fn last(&self) -> Option<&Activation> {
+        self.0.last()
+    }
+
     fn last_mut(&mut self) -> Option<&mut Activation> {
         self.0.last_mut()
     }
@@ -73,8 +76,8 @@ impl ActivationStack {
 }
 
 pub struct Activation {
-    pc: usize,
-    function_index: usize,
+    pub pc: usize,
+    pub function_index: usize,
 
-    locales: Vec<RuntimeValue>,
+    pub locales: Vec<RuntimeValue>,
 }

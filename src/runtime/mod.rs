@@ -52,11 +52,10 @@ impl Runtime {
         args: &[RuntimeValue],
     ) -> Result<ValueStack, RuntimeError> {
         self.activation_stack = ActivationStack::init(func_index, args.to_vec());
-        let instructions = self.function_table.get(func_index).unwrap().code.clone();
 
         let mut skip_else_or_end = false;
 
-        while let Some(instruction) = instructions.get(self.pc()) {
+        while let Some(instruction) = self.instructions()?.get(self.pc()) {
             let instruction = instruction.clone();
 
             self.increment_pc()?;
@@ -618,5 +617,19 @@ impl Runtime {
 
     fn increment_pc(&mut self) -> Result<(), RuntimeError> {
         self.activation_stack.increment_pc()
+    }
+
+    fn instructions(&self) -> Result<Vec<Instruction>, RuntimeError> {
+        let i = match self.activation_stack.last() {
+            None => {
+                return Err(RuntimeError::NotFound(format!(
+                    "not found activation stack"
+                )))
+            }
+            Some(activation) => activation.function_index,
+        };
+        let instructions = self.function_table.get(i).unwrap().code.clone();
+
+        Ok(instructions)
     }
 }
