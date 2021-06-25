@@ -13,30 +13,29 @@ pub use runtime_value::RuntimeValue;
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::*;
+use activation_stack::{Activation, ActivationStack};
 use label_stack::{Label, LabelStack, LabelType};
 
 type ValueStack = Vec<RuntimeValue>;
 
 pub struct Runtime {
     pc: usize,
-    instructions: Vec<Instruction>,
     function_table: FunctionTable,
 
     value_stack: ValueStack,
     label_stack: LabelStack,
+    activation_stack: ActivationStack,
 
     memory: Memory,
 }
 
 impl Runtime {
-    pub fn new(
-        instructions: Vec<Instruction>,
-        function_table: FunctionTable,
-        memory: Memory,
-    ) -> Self {
+    pub fn new(function_table: FunctionTable, memory: Memory) -> Self {
+        let activation_stack = ActivationStack::new();
+
         Self {
-            instructions,
             function_table,
+            activation_stack,
             pc: 0,
             value_stack: Vec::new(),
             label_stack: Vec::new(),
@@ -49,13 +48,17 @@ impl Runtime {
         todo!()
     }
 
-    pub fn execute(&mut self, args: &[RuntimeValue]) -> Result<ValueStack, RuntimeError> {
-        let mut locals = Vec::from(args);
+    pub fn execute(
+        &mut self,
+        func_index: usize,
+        args: &[RuntimeValue],
+    ) -> Result<ValueStack, RuntimeError> {
+        self.activation_stack = ActivationStack::init(func_index, args.to_vec());
+        let instructions = self.function_table.get(func_index).unwrap().code.clone();
 
-        // let mut activation_stack: Vec<u8> = Vec::new();
         let mut skip_else_or_end = false;
 
-        while let Some(instruction) = self.instructions.get(self.pc) {
+        while let Some(instruction) = instructions.get(self.pc) {
             let instruction = instruction.clone();
 
             self.pc += 1;
@@ -102,10 +105,12 @@ impl Runtime {
                     self.vpop()?;
                 }
                 Instruction::Select => self.select()?,
-                Instruction::GetLocal(_) => self.value_stack.push(locals.pop().unwrap()),
+                Instruction::GetLocal(_) => {
+                    self.value_stack.push(self.activation_stack.get_local()?)
+                }
                 Instruction::SetLocal(i) => {
                     let v = self.value_stack.pop().unwrap();
-                    locals.insert(usize::from(i), v);
+                    self.activation_stack.set_local(usize::from(i), v)?;
                 }
                 Instruction::TeeLocal(_) => todo!(),
                 Instruction::GetGlobal(_) => todo!(),

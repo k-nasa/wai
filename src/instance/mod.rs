@@ -32,8 +32,8 @@ impl Instance {
         Instance::validate(&func.params, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         let memory = Memory::new(self.init_memory()?);
 
-        let mut runtime = Runtime::new(func.code.clone(), function_table, memory);
-        let stack = runtime.execute(&args)?;
+        let mut runtime = Runtime::new(function_table, memory);
+        let stack = runtime.execute(index, &args)?;
 
         Ok(stack)
     }
