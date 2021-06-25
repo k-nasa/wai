@@ -1,5 +1,5 @@
 use crate::decode::error::DecodeError;
-use crate::instruction::Instruction;
+pub use crate::instruction::Instruction;
 use crate::runtime::RuntimeValue;
 use std::convert::TryFrom;
 

@@ -1,5 +1,5 @@
 use crate::module::Module;
-use crate::runtime::{error::RuntimeError, memory::Memory, Runtime, RuntimeValue};
+use crate::runtime::{error::RuntimeError, FunctionTable, Memory, Runtime, RuntimeValue};
 use crate::types::*;
 
 #[derive(Debug)]
@@ -31,7 +31,8 @@ impl Instance {
         Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         let memory = Memory::new(self.init_memory()?);
 
-        let mut runtime = Runtime::new(func.code.clone(), memory);
+        let function_table = FunctionTable::from_module(&self.module);
+        let mut runtime = Runtime::new(func.code.clone(), function_table, memory);
         let stack = runtime.execute(&args)?;
 
         Ok(stack)

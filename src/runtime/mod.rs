@@ -1,21 +1,26 @@
+mod activation_stack;
 pub mod error;
+mod function_table;
 mod label_stack;
 pub mod memory;
 pub mod runtime_value;
 
+pub use error::RuntimeError;
+pub use function_table::FunctionTable;
+pub use memory::Memory;
+pub use runtime_value::RuntimeValue;
+
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::*;
-pub use error::RuntimeError;
 use label_stack::{Label, LabelStack, LabelType};
-use memory::Memory;
-pub use runtime_value::RuntimeValue;
 
 type ValueStack = Vec<RuntimeValue>;
 
 pub struct Runtime {
     pc: usize,
     instructions: Vec<Instruction>,
+    function_table: FunctionTable,
 
     value_stack: ValueStack,
     label_stack: LabelStack,
@@ -24,9 +29,14 @@ pub struct Runtime {
 }
 
 impl Runtime {
-    pub fn new(instructions: Vec<Instruction>, memory: Memory) -> Self {
+    pub fn new(
+        instructions: Vec<Instruction>,
+        function_table: FunctionTable,
+        memory: Memory,
+    ) -> Self {
         Self {
             instructions,
+            function_table,
             pc: 0,
             value_stack: Vec::new(),
             label_stack: Vec::new(),
