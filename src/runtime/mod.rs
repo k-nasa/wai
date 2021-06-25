@@ -90,7 +90,7 @@ impl Runtime {
                         skip_else_or_end = true;
                     }
                 }
-                Instruction::Else => todo!(),
+                Instruction::Else => self.lpop()?,
                 Instruction::End => {}
                 Instruction::Br(_) => todo!(),
                 Instruction::BrIf(_) => todo!(),
@@ -575,12 +575,20 @@ impl Runtime {
         Ok(())
     }
 
+    fn lpop(&mut self) -> Result<(), RuntimeError> {
+        match self.label_stack.pop() {
+            Some(_) => Ok(()),
+            None => Err(RuntimeError::ExpectValueStack),
+        }
+    }
+
     fn vpop(&mut self) -> Result<RuntimeValue, RuntimeError> {
         match self.value_stack.pop() {
             Some(v) => Ok(v),
             None => Err(RuntimeError::ExpectValueStack),
         }
     }
+
     fn vpush(&mut self, v: RuntimeValue) {
         self.value_stack.push(v)
     }

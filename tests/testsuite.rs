@@ -20,6 +20,7 @@ wasm_test!(custom, "./testsuite/custom.wast");
 wasm_test!(data, "./testsuite/data.wast");
 wasm_test!(_type, "./testsuite/type.wast");
 wasm_test!(block, "./testsuite/block.wast");
+// wasm_test!(call, "./testsuite/call.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     let mut buf = vec![];
@@ -36,6 +37,7 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
             WastDirective::Module(mut module) => {
                 let module_binary = module.encode()?;
                 m = Module::from_byte(module_binary)?;
+                dbg!(&m);
             }
             WastDirective::AssertReturn { exec, results, .. } => {
                 let (name, args) = match exec {
