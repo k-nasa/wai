@@ -19,7 +19,6 @@ use label_stack::{Label, LabelStack, LabelType};
 type ValueStack = Vec<RuntimeValue>;
 
 pub struct Runtime {
-    pc: usize,
     function_table: FunctionTable,
 
     value_stack: ValueStack,
@@ -36,7 +35,6 @@ impl Runtime {
         Self {
             function_table,
             activation_stack,
-            pc: 0,
             value_stack: Vec::new(),
             label_stack: Vec::new(),
 
@@ -58,10 +56,10 @@ impl Runtime {
 
         let mut skip_else_or_end = false;
 
-        while let Some(instruction) = instructions.get(self.pc) {
+        while let Some(instruction) = instructions.get(self.pc()) {
             let instruction = instruction.clone();
 
-            self.pc += 1;
+            self.increment_pc()?;
 
             // TODO flagじゃなくてlabelでいい感じにしたい
             if skip_else_or_end {
@@ -589,13 +587,15 @@ impl Runtime {
     }
 
     fn block(&mut self, result_type: BlockType) {
+        let pc = self.pc();
         self.label_stack
-            .push(Label::new(self.pc, LabelType::Block, result_type));
+            .push(Label::new(pc, LabelType::Block, result_type));
     }
 
     fn _loop(&mut self, result_type: BlockType) {
+        let pc = self.pc();
         self.label_stack
-            .push(Label::new(self.pc, LabelType::Loop, result_type));
+            .push(Label::new(pc, LabelType::Loop, result_type));
     }
 
     fn select(&mut self) -> Result<(), RuntimeError> {
@@ -610,5 +610,13 @@ impl Runtime {
         }
 
         Ok(())
+    }
+
+    fn pc(&mut self) -> usize {
+        self.activation_stack.pc().unwrap()
+    }
+
+    fn increment_pc(&mut self) -> Result<(), RuntimeError> {
+        self.activation_stack.increment_pc()
     }
 }
