@@ -5,8 +5,9 @@ pub mod runtime_value;
 
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
+use crate::types::*;
 pub use error::RuntimeError;
-use label_stack::{Label, LabelStack};
+use label_stack::{Label, LabelStack, LabelType};
 use memory::Memory;
 pub use runtime_value::RuntimeValue;
 
@@ -41,7 +42,6 @@ impl Runtime {
     pub fn execute(&mut self, args: &[RuntimeValue]) -> Result<ValueStack, RuntimeError> {
         let mut locals = Vec::from(args);
 
-        // let mut label_stack: Vec<u8> = Vec::new();
         // let mut activation_stack: Vec<u8> = Vec::new();
         let mut skip_else_or_end = false;
 
@@ -66,11 +66,8 @@ impl Runtime {
 
                 Instruction::Unreachable => {} // FIXME とりあえず握りつぶしてしまう。良いハンドリングを行いたい
                 Instruction::Nop => {}
-                Instruction::Block(result_type) => {
-                    self.label_stack
-                        .push(Label::new_block(self.pc, result_type));
-                }
-                Instruction::Loop(_) => todo!(),
+                Instruction::Block(result_type) => self.block(result_type),
+                Instruction::Loop(result_type) => self._loop(result_type),
                 Instruction::If(_block_type) => {
                     if self.value_stack.is_empty() {
                         return Err(RuntimeError::Custom(
@@ -89,10 +86,12 @@ impl Runtime {
                 Instruction::BrIf(_) => todo!(),
                 Instruction::BrTable(_, _) => todo!(),
                 Instruction::Return => todo!(),
-                Instruction::Call(_) => todo!(),
+                Instruction::Call(_) => {}
                 Instruction::CallIndirect(_, _) => todo!(),
-                Instruction::Drop => todo!(),
-                Instruction::Select => todo!(),
+                Instruction::Drop => {
+                    self.vpop()?;
+                }
+                Instruction::Select => self.select()?,
                 Instruction::GetLocal(_) => self.value_stack.push(locals.pop().unwrap()),
                 Instruction::SetLocal(i) => {
                     let v = self.value_stack.pop().unwrap();
@@ -561,6 +560,40 @@ impl Runtime {
         let result = self.memory.load::<T>(addr as usize)?;
 
         self.value_stack.push(U::from(result).into());
+        Ok(())
+    }
+
+    fn vpop(&mut self) -> Result<RuntimeValue, RuntimeError> {
+        match self.value_stack.pop() {
+            Some(v) => Ok(v),
+            None => Err(RuntimeError::ExpectValueStack),
+        }
+    }
+    fn vpush(&mut self, v: RuntimeValue) {
+        self.value_stack.push(v)
+    }
+
+    fn block(&mut self, result_type: BlockType) {
+        self.label_stack
+            .push(Label::new(self.pc, LabelType::Block, result_type));
+    }
+
+    fn _loop(&mut self, result_type: BlockType) {
+        self.label_stack
+            .push(Label::new(self.pc, LabelType::Loop, result_type));
+    }
+
+    fn select(&mut self) -> Result<(), RuntimeError> {
+        let condition = self.vpop()?;
+        let v1 = self.vpop()?;
+        let v2 = self.vpop()?;
+
+        if bool::from(condition) {
+            self.vpush(v2);
+        } else {
+            self.vpush(v1);
+        }
+
         Ok(())
     }
 }
