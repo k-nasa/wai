@@ -18,10 +18,10 @@ impl From<u8> for ValueType {
 
         match x {
             0x7f => I32,
-            0x02 => I64,
-            0x03 => F32,
-            0x04 => F64,
-            _ => Unknown,
+            0x7e => I64,
+            0x7d => F32,
+            0x7c => F64,
+            _ => unreachable!(),
         }
     }
 }
