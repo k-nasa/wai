@@ -25,13 +25,13 @@ impl Instance {
             Some(i) => i,
         };
 
-        let func_type = self.get_func_type(index)?;
-        let func = self.get_function(index)?;
+        let function_table = FunctionTable::from_module(&self.module);
 
-        Instance::validate(func_type, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
+        let func = function_table.get(index).unwrap();
+
+        Instance::validate(&func.params, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         let memory = Memory::new(self.init_memory()?);
 
-        let function_table = FunctionTable::from_module(&self.module);
         let mut runtime = Runtime::new(func.code.clone(), function_table, memory);
         let stack = runtime.execute(&args)?;
 
@@ -51,34 +51,6 @@ impl Instance {
         entry.map(|x| x.index as usize)
     }
 
-    fn get_function(&self, index: usize) -> Result<&FunctionBody, RuntimeError> {
-        let code_section = &self.module.code_section.as_ref();
-        if code_section.is_none() {
-            return Err(RuntimeError::ExpectCodeSection);
-        }
-        let function = code_section.unwrap().bodies.get(index).unwrap();
-
-        Ok(function)
-    }
-
-    fn get_func_type(&self, index: usize) -> Result<&FuncType, RuntimeError> {
-        let func_section = &self.module.function_section.as_ref();
-        if func_section.is_none() {
-            return Err(RuntimeError::ExpectCodeSection); // fix error type
-        }
-
-        let t = func_section.unwrap().types.get(index).unwrap();
-
-        let type_section = &self.module.type_section.as_ref();
-        if type_section.is_none() {
-            return Err(RuntimeError::ExpectCodeSection); // fix error type
-        }
-
-        let types = type_section.unwrap().entries.get(*t as usize).unwrap();
-
-        Ok(types)
-    }
-
     fn init_memory(&self) -> Result<Vec<u8>, RuntimeError> {
         let section = self.module.data_section.as_ref();
         if section.is_none() {
@@ -89,12 +61,12 @@ impl Instance {
         Ok(init_memory)
     }
 
-    fn validate(func_type: &FuncType, args: &[RuntimeValue]) -> Result<(), RuntimeError> {
+    fn validate(func_type: &[ValueType], args: &[RuntimeValue]) -> Result<(), RuntimeError> {
         let args_types: Vec<_> = args.iter().map(RuntimeValue::to_type).collect();
 
-        let expect = func_type.params.clone();
+        let expect = func_type;
         if expect != args_types {
-            return Err(RuntimeError::InvalidArgs(expect, args_types));
+            return Err(RuntimeError::InvalidArgs(expect.to_vec(), args_types));
         }
 
         Ok(())

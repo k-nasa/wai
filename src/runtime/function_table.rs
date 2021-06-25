@@ -50,14 +50,18 @@ impl FunctionTable {
             ))
         }
 
-        todo!()
+        Self(f)
+    }
+
+    pub fn get(&self, i: usize) -> Option<&Function> {
+        self.0.get(i)
     }
 }
 
-struct Function {
-    params: Vec<ValueType>,
-    returns: Vec<ValueType>,
-    code: Vec<Instruction>,
+pub struct Function {
+    pub params: Vec<ValueType>,
+    pub returns: Vec<ValueType>,
+    pub code: Vec<Instruction>,
 }
 
 impl Function {
