@@ -53,23 +53,11 @@ impl Runtime {
     ) -> Result<ValueStack, RuntimeError> {
         self.activation_stack = ActivationStack::init(func_index, args.to_vec());
 
-        let mut skip_else_or_end = false;
-
         while let Some(instruction) = self.instructions()?.get(self.pc()) {
             let instruction = instruction.clone();
 
             self.increment_pc()?;
 
-            // TODO flagじゃなくてlabelでいい感じにしたい
-            if skip_else_or_end {
-                // TODO support else
-
-                if instruction == Instruction::Else || instruction == Instruction::End {
-                    skip_else_or_end = false;
-                }
-
-                continue;
-            }
             match instruction {
                 Instruction::Reserved => {}
                 Instruction::Prefix(_) => {}
@@ -87,7 +75,6 @@ impl Runtime {
                     let condition = bool::from(self.value_stack.pop().unwrap());
                     if condition {
                     } else {
-                        skip_else_or_end = true;
                     }
                 }
                 Instruction::Else => self.lpop()?,
