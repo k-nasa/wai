@@ -13,7 +13,7 @@ pub use runtime_value::RuntimeValue;
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::*;
-use activation_stack::{Activation, ActivationStack};
+use activation_stack::ActivationStack;
 use label_stack::{Label, LabelStack, LabelType};
 
 type ValueStack = Vec<RuntimeValue>;
@@ -670,9 +670,9 @@ impl Runtime {
     fn instructions(&self) -> Result<Vec<Instruction>, RuntimeError> {
         let i = match self.activation_stack.last() {
             None => {
-                return Err(RuntimeError::NotFound(format!(
-                    "not found activation stack"
-                )))
+                return Err(RuntimeError::NotFound(
+                    "not found activation stack".to_string(),
+                ))
             }
             Some(activation) => activation.function_index,
         };

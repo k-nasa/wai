@@ -25,7 +25,7 @@ impl ActivationStack {
         Ok(activation.pc)
     }
 
-    pub fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+    pub fn _set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
         let activation = match self.last_mut() {
             None => return Err(RuntimeError::ExpectActivationStack),
             Some(v) => v,
@@ -52,7 +52,7 @@ impl ActivationStack {
         };
 
         match locals.get(i) {
-            None => return Err(RuntimeError::NotFound(format!("local"))),
+            None => Err(RuntimeError::NotFound("local".to_string())),
             Some(v) => Ok(v),
         }
     }
@@ -77,10 +77,7 @@ impl ActivationStack {
     }
 
     fn locales_mut(&mut self) -> Option<&mut Vec<RuntimeValue>> {
-        match self.last_mut() {
-            None => return None,
-            Some(activation) => Some(&mut activation.locales),
-        }
+        self.last_mut().map(|a| &mut a.locales)
     }
 }
 
