@@ -69,7 +69,6 @@ impl Runtime {
                 Instruction::If(block_type) => self._if(block_type)?,
                 Instruction::Else => self._else()?,
                 Instruction::End => {
-                    dbg!(&self.label_stack);
                     self.lpop()?;
                 }
                 Instruction::Br(_) => todo!(),
@@ -607,7 +606,6 @@ impl Runtime {
     }
 
     fn _if(&mut self, block_type: BlockType) -> Result<(), RuntimeError> {
-        dbg!(&self.label_stack);
         if self.value_stack.is_empty() {
             return Err(RuntimeError::Custom(
                 "value stack is empty, if is expected value".to_string(),
@@ -633,12 +631,10 @@ impl Runtime {
             self.label_stack.push(Label::new_if(pc, block_type, false));
         }
 
-        dbg!(&self.label_stack);
         Ok(())
     }
 
     fn _else(&mut self) -> Result<(), RuntimeError> {
-        dbg!(&self.label_stack);
         let label = self.get_label()?;
 
         match label.label_type {
@@ -656,7 +652,6 @@ impl Runtime {
             _ => panic!("{:?}", label),
         };
 
-        dbg!(&self.label_stack);
         Ok(())
     }
 
