@@ -61,9 +61,9 @@ impl Runtime {
             match instruction {
                 Instruction::Reserved => {}
                 Instruction::Prefix(_) => {}
-
-                Instruction::Unreachable => {} // FIXME とりあえず握りつぶしてしまう。良いハンドリングを行いたい
                 Instruction::Nop => {}
+
+                Instruction::Unreachable => unreachable!(),
                 Instruction::Block(result_type) => self.block(result_type),
                 Instruction::Loop(result_type) => self._loop(result_type),
                 Instruction::If(_block_type) => {
