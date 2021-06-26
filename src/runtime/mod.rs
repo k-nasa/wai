@@ -66,19 +66,12 @@ impl Runtime {
                 Instruction::Unreachable => unreachable!(),
                 Instruction::Block(result_type) => self.block(result_type),
                 Instruction::Loop(result_type) => self._loop(result_type),
-                Instruction::If(_block_type) => {
-                    if self.value_stack.is_empty() {
-                        return Err(RuntimeError::Custom(
-                            "value stack is empty, if is expected value".to_string(),
-                        ));
-                    }
-                    let condition = bool::from(self.value_stack.pop().unwrap());
-                    if condition {
-                    } else {
-                    }
+                Instruction::If(block_type) => self._if(block_type)?,
+                Instruction::Else => self._else()?,
+                Instruction::End => {
+                    dbg!(&self.label_stack);
+                    self.lpop()?;
                 }
-                Instruction::Else => self.lpop()?,
-                Instruction::End => {}
                 Instruction::Br(_) => todo!(),
                 Instruction::BrIf(_) => todo!(),
                 Instruction::BrTable(_, _) => todo!(),
@@ -562,10 +555,17 @@ impl Runtime {
         Ok(())
     }
 
-    fn lpop(&mut self) -> Result<(), RuntimeError> {
+    fn lpop(&mut self) -> Result<Label, RuntimeError> {
         match self.label_stack.pop() {
-            Some(_) => Ok(()),
-            None => Err(RuntimeError::ExpectValueStack),
+            Some(label) => Ok(label),
+            None => Err(RuntimeError::ExpectLabelStack),
+        }
+    }
+
+    fn get_label(&mut self) -> Result<&Label, RuntimeError> {
+        match self.label_stack.last() {
+            Some(label) => Ok(label),
+            None => Err(RuntimeError::ExpectLabelStack),
         }
     }
 
@@ -606,8 +606,65 @@ impl Runtime {
         Ok(())
     }
 
+    fn _if(&mut self, block_type: BlockType) -> Result<(), RuntimeError> {
+        dbg!(&self.label_stack);
+        if self.value_stack.is_empty() {
+            return Err(RuntimeError::Custom(
+                "value stack is empty, if is expected value".to_string(),
+            ));
+        }
+        let condition = bool::from(self.value_stack.pop().unwrap());
+
+        if condition {
+            let pc = self.pc();
+            self.label_stack.push(Label::new_if(pc, block_type, true));
+        } else {
+            // NOTE skip else or end
+            while let Some(instruction) = self.instructions()?.get(self.pc()) {
+                if *instruction == Instruction::Else || *instruction == Instruction::End {
+                    break;
+                }
+                self.increment_pc()?;
+                continue;
+            }
+
+            let pc = self.pc();
+            self.label_stack.push(Label::new_if(pc, block_type, false));
+        }
+
+        dbg!(&self.label_stack);
+        Ok(())
+    }
+
+    fn _else(&mut self) -> Result<(), RuntimeError> {
+        dbg!(&self.label_stack);
+        let label = self.get_label()?;
+
+        match label.label_type {
+            LabelType::If(condition) => {
+                if condition {
+                    while let Some(instruction) = self.instructions()?.get(self.pc()) {
+                        self.increment_pc()?;
+                        if *instruction == Instruction::End {
+                            break;
+                        }
+                        continue;
+                    }
+                }
+            }
+            _ => panic!("{:?}", label),
+        };
+
+        dbg!(&self.label_stack);
+        Ok(())
+    }
+
     fn pc(&mut self) -> usize {
         self.activation_stack.pc().unwrap()
+    }
+
+    fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+        self.activation_stack.set_pc(pc)
     }
 
     fn increment_pc(&mut self) -> Result<(), RuntimeError> {

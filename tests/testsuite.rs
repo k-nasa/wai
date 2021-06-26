@@ -47,7 +47,10 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
 
                 let args: Vec<RuntimeValue> = args.iter().map(args_to_runtime_value).collect();
                 let instance = Instance::new(m.clone());
-                let actual = instance.invoke(&name, args.clone())?;
+                let actual = match instance.invoke(&name, args.clone()) {
+                    Ok(v) => v,
+                    Err(e) => panic!("\n====== failed assert {}==========\nerror: {}, ", name, e),
+                };
 
                 let expected: Vec<RuntimeValue> =
                     results.iter().map(result_to_runtime_value).collect();

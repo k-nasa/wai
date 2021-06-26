@@ -25,6 +25,15 @@ impl ActivationStack {
         Ok(activation.pc)
     }
 
+    pub fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+        let activation = match self.last_mut() {
+            None => return Err(RuntimeError::ExpectActivationStack),
+            Some(v) => v,
+        };
+        activation.pc = pc;
+        Ok(())
+    }
+
     pub fn increment_pc(&mut self) -> Result<(), RuntimeError> {
         let activation = match self.last_mut() {
             None => return Err(RuntimeError::ExpectActivationStack),

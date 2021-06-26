@@ -81,11 +81,11 @@ impl From<RuntimeValue> for bool {
     fn from(v: RuntimeValue) -> bool {
         use RuntimeValue::*;
         match v {
-            I32(x) => x as u32 != 0,
-            I64(x) => x as u32 != 0,
+            I32(x) => x != 0,
+            I64(x) => x != 0,
             F32(x) => x as u32 != 0,
             F64(x) => x as u32 != 0,
-            V128(x) => x as u32 != 0,
+            V128(x) => x != 0,
         }
     }
 }
