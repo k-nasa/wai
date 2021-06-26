@@ -25,6 +25,10 @@ impl ActivationStack {
         Ok(activation.pc)
     }
 
+    pub fn pop(&mut self) -> Option<Activation> {
+        self.0.pop()
+    }
+
     pub fn _set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
         let activation = match self.last_mut() {
             None => return Err(RuntimeError::ExpectActivationStack),

@@ -13,7 +13,7 @@ pub use runtime_value::RuntimeValue;
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::*;
-use activation_stack::ActivationStack;
+use activation_stack::{Activation, ActivationStack};
 use label_stack::{Label, LabelStack, LabelType};
 
 type ValueStack = Vec<RuntimeValue>;
@@ -74,7 +74,9 @@ impl Runtime {
                 Instruction::Br(_) => todo!(),
                 Instruction::BrIf(_) => todo!(),
                 Instruction::BrTable(_, _) => todo!(),
-                Instruction::Return => todo!(),
+                Instruction::Return => {
+                    self.apop()?;
+                }
                 Instruction::Call(_) => {}
                 Instruction::CallIndirect(_, _) => todo!(),
                 Instruction::Drop => {
@@ -575,6 +577,13 @@ impl Runtime {
         }
     }
 
+    fn apop(&mut self) -> Result<Activation, RuntimeError> {
+        match self.activation_stack.pop() {
+            Some(v) => Ok(v),
+            None => Err(RuntimeError::ExpectActivationStack),
+        }
+    }
+
     fn vpush(&mut self, v: RuntimeValue) {
         self.value_stack.push(v)
     }
@@ -669,11 +678,7 @@ impl Runtime {
 
     fn instructions(&self) -> Result<Vec<Instruction>, RuntimeError> {
         let i = match self.activation_stack.last() {
-            None => {
-                return Err(RuntimeError::NotFound(
-                    "not found activation stack".to_string(),
-                ))
-            }
+            None => return Ok(vec![]),
             Some(activation) => activation.function_index,
         };
         let instructions = self.function_table.get(i).unwrap().code.clone();
