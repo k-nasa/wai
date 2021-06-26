@@ -45,14 +45,14 @@ impl ActivationStack {
         Ok(())
     }
 
-    pub fn get_local(&mut self) -> Result<RuntimeValue, RuntimeError> {
+    pub fn get_local(&mut self, i: usize) -> Result<&RuntimeValue, RuntimeError> {
         let locals = match self.locales_mut() {
             None => return Err(RuntimeError::ExpectActivationStack),
             Some(v) => v,
         };
 
-        match locals.pop() {
-            None => return Err(RuntimeError::NotFound(format!("nothing local"))),
+        match locals.get(i) {
+            None => return Err(RuntimeError::NotFound(format!("local"))),
             Some(v) => Ok(v),
         }
     }

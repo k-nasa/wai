@@ -19,7 +19,8 @@ wasm_test!(consts, "./testsuite/const.wast");
 wasm_test!(custom, "./testsuite/custom.wast");
 wasm_test!(data, "./testsuite/data.wast");
 wasm_test!(_type, "./testsuite/type.wast");
-wasm_test!(block, "./testsuite/block.wast");
+// wasm_test!(_if, "./testsuite/if.wast");
+// wasm_test!(block, "./testsuite/block.wast");
 // wasm_test!(call, "./testsuite/call.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {

@@ -82,9 +82,9 @@ impl Runtime {
                     self.vpop()?;
                 }
                 Instruction::Select => self.select()?,
-                Instruction::GetLocal(_) => {
-                    self.value_stack.push(self.activation_stack.get_local()?)
-                }
+                Instruction::GetLocal(i) => self
+                    .value_stack
+                    .push(*self.activation_stack.get_local(usize::from(i))?),
                 Instruction::SetLocal(i) => {
                     let v = self.value_stack.pop().unwrap();
                     self.activation_stack.set_local(usize::from(i), v)?;
@@ -624,6 +624,7 @@ impl Runtime {
                 if *instruction == Instruction::Else || *instruction == Instruction::End {
                     break;
                 }
+
                 self.increment_pc()?;
                 continue;
             }
@@ -663,9 +664,9 @@ impl Runtime {
         self.activation_stack.pc().unwrap()
     }
 
-    fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
-        self.activation_stack.set_pc(pc)
-    }
+    // fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+    //     self.activation_stack.set_pc(pc)
+    // }
 
     fn increment_pc(&mut self) -> Result<(), RuntimeError> {
         self.activation_stack.increment_pc()
