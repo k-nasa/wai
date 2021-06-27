@@ -55,7 +55,6 @@ impl Runtime {
 
         while let Some(instruction) = self.instructions()?.get(self.pc()) {
             let instruction = instruction.clone();
-
             self.increment_pc()?;
 
             match instruction {
@@ -71,8 +70,8 @@ impl Runtime {
                 Instruction::End => {
                     self.lpop()?;
                 }
-                Instruction::Br(_) => todo!(),
-                Instruction::BrIf(_) => todo!(),
+                Instruction::Br(depth) => self.br(usize::from(depth))?,
+                Instruction::BrIf(depth) => self.br_if(usize::from(depth))?,
                 Instruction::BrTable(_, _) => todo!(),
                 Instruction::Return => {
                     self.apop()?;
@@ -303,8 +302,8 @@ impl Runtime {
     where
         T: From<RuntimeValue>,
     {
-        let l = self.value_stack.pop().unwrap();
         let r = self.value_stack.pop().unwrap();
+        let l = self.value_stack.pop().unwrap();
 
         (T::from(l), T::from(r))
     }
@@ -626,15 +625,7 @@ impl Runtime {
             let pc = self.pc();
             self.label_stack.push(Label::new_if(pc, block_type, true));
         } else {
-            // NOTE skip else or end
-            while let Some(instruction) = self.instructions()?.get(self.pc()) {
-                if *instruction == Instruction::Else || *instruction == Instruction::End {
-                    break;
-                }
-
-                self.increment_pc()?;
-                continue;
-            }
+            self.skip_else_or_end()?;
 
             let pc = self.pc();
             self.label_stack.push(Label::new_if(pc, block_type, false));
@@ -658,19 +649,54 @@ impl Runtime {
                     }
                 }
             }
-            _ => panic!("{:?}", label),
+            _ => unreachable!("{:?}", label),
         };
 
         Ok(())
+    }
+
+    fn br(&mut self, depth: usize) -> Result<(), RuntimeError> {
+        for _ in 0..depth {
+            self.lpop()?;
+        }
+
+        let label = if let Some(label) = self.label_stack.last() {
+            label
+        } else {
+            todo!("ラベルがない場合の処理はあとから書く")
+        };
+
+        match label.label_type {
+            LabelType::Loop => {
+                let pc = label.pc;
+                self.set_pc(pc)?;
+            }
+            _ => {
+                for _ in 0..depth + 1 {
+                    self.skip_else_or_end()?
+                }
+            }
+        };
+
+        Ok(())
+    }
+
+    fn br_if(&mut self, depth: usize) -> Result<(), RuntimeError> {
+        let condition = bool::from(self.vpop()?);
+        if !condition {
+            return Ok(());
+        }
+
+        self.br(depth)
     }
 
     fn pc(&mut self) -> usize {
         self.activation_stack.pc().unwrap()
     }
 
-    // fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
-    //     self.activation_stack.set_pc(pc)
-    // }
+    fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+        self.activation_stack.set_pc(pc)
+    }
 
     fn increment_pc(&mut self) -> Result<(), RuntimeError> {
         self.activation_stack.increment_pc()
@@ -684,5 +710,18 @@ impl Runtime {
         let instructions = self.function_table.get(i).unwrap().code.clone();
 
         Ok(instructions)
+    }
+
+    fn skip_else_or_end(&mut self) -> Result<(), RuntimeError> {
+        while let Some(instruction) = self.instructions()?.get(self.pc()) {
+            if *instruction == Instruction::Else || *instruction == Instruction::End {
+                break;
+            }
+
+            self.increment_pc()?;
+            continue;
+        }
+
+        Ok(())
     }
 }

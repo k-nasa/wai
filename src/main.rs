@@ -28,6 +28,7 @@ fn main() -> anyhow::Result<()> {
     let bytes = std::fs::read(filename)?;
 
     let m = Module::from_byte(bytes)?;
+    dbg!(&m);
     let instance = Instance::new(m);
 
     // TODO implement custom argument

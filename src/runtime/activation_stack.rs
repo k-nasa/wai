@@ -1,17 +1,27 @@
 use crate::runtime::RuntimeError;
 use crate::runtime::RuntimeValue;
+use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct ActivationStack(Vec<Activation>);
+
+pub type Locals = HashMap<usize, RuntimeValue>;
 
 impl ActivationStack {
     pub fn new() -> Self {
         Self(vec![])
     }
 
-    pub fn init(function_index: usize, locales: Vec<RuntimeValue>) -> Self {
+    pub fn init(function_index: usize, locals_vec: Vec<RuntimeValue>) -> Self {
+        let mut locals: Locals = HashMap::new();
+
+        for i in 0..locals_vec.len() {
+            locals.insert(i, locals_vec[i]);
+        }
+
         Self(vec![Activation {
             function_index,
-            locales,
+            locals,
             pc: 0,
         }])
     }
@@ -29,7 +39,7 @@ impl ActivationStack {
         self.0.pop()
     }
 
-    pub fn _set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
+    pub fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
         let activation = match self.last_mut() {
             None => return Err(RuntimeError::ExpectActivationStack),
             Some(v) => v,
@@ -55,7 +65,7 @@ impl ActivationStack {
             Some(v) => v,
         };
 
-        match locals.get(i) {
+        match locals.get(&i) {
             None => Err(RuntimeError::NotFound("local".to_string())),
             Some(v) => Ok(v),
         }
@@ -80,14 +90,15 @@ impl ActivationStack {
         self.0.last_mut()
     }
 
-    fn locales_mut(&mut self) -> Option<&mut Vec<RuntimeValue>> {
-        self.last_mut().map(|a| &mut a.locales)
+    fn locales_mut(&mut self) -> Option<&mut Locals> {
+        self.last_mut().map(|a| &mut a.locals)
     }
 }
 
+#[derive(Debug)]
 pub struct Activation {
     pub pc: usize,
     pub function_index: usize,
 
-    pub locales: Vec<RuntimeValue>,
+    pub locals: Locals,
 }
