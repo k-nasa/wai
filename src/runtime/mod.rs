@@ -76,7 +76,7 @@ impl Runtime {
                 Instruction::Return => {
                     self.apop()?;
                 }
-                Instruction::Call(_) => {}
+                Instruction::Call(_) => todo!(),
                 Instruction::CallIndirect(_, _) => todo!(),
                 Instruction::Drop => {
                     self.vpop()?;

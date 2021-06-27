@@ -12,6 +12,8 @@ macro_rules! wasm_test {
 }
 
 wasm_test!(add, "./wat/add.wat");
+wasm_test!(fib, "./wat/fib.wat");
+
 wasm_test!(address, "./testsuite/address.wast");
 wasm_test!(binary, "./testsuite/binary.wast");
 wasm_test!(comments, "./testsuite/comments.wast");
@@ -21,7 +23,7 @@ wasm_test!(data, "./testsuite/data.wast");
 wasm_test!(_type, "./testsuite/type.wast");
 // wasm_test!(select, "./testsuite/select.wast");
 // wasm_test!(_if, "./testsuite/if.wast");
-wasm_test!(block, "./testsuite/block.wast");
+// wasm_test!(block, "./testsuite/block.wast");
 // wasm_test!(call, "./testsuite/call.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
