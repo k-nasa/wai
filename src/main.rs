@@ -1,5 +1,5 @@
 use clap::{AppSettings, Clap};
-use wasmi::*;
+use wai::*;
 
 #[derive(Clap)]
 #[clap(

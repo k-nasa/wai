@@ -1,5 +1,5 @@
 use std::io::Read;
-use wasmi::*;
+use wai::*;
 use wast::WastDirective;
 
 macro_rules! wasm_test {

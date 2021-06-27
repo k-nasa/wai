@@ -437,7 +437,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasmi"
+name = "wai"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -448,12 +448,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "wasmi-fuzz"
+name = "wai-fuzz"
 version = "0.0.0"
 dependencies = [
  "libfuzzer-sys",
  "wasm-smith",
- "wasmi",
+ "wai",
 ]
 
 [[package]]
