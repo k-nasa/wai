@@ -61,24 +61,24 @@ jobs:
       - name: fmt
         run: cargo fmt --all -- --check
 
-  fuzzing:
-    name: Fuzzing
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macOS-latest]
-        rust: [nightly]
-
-    steps:
-      - uses: actions/checkout@master
-
-      - name: Install ${{ matrix.rust }}
-        uses: actions-rs/toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
-          override: true
-
-      - name: fuzzing
-        run: |
-          cargo install cargo-fuzz
-          cargo fuzz run decode --jobs 4 -- -runs=10000
+  # fuzzing:
+  #   name: Fuzzing
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest, macOS-latest]
+  #       rust: [nightly]
+  #
+  #   steps:
+  #     - uses: actions/checkout@master
+  #
+  #     - name: Install ${{ matrix.rust }}
+  #       uses: actions-rs/toolchain@master
+  #       with:
+  #         toolchain: ${{ matrix.rust }}
+  #         override: true
+  #
+  #     - name: fuzzing
+  #       run: |
+  #         cargo install cargo-fuzz
+  #         cargo fuzz run decode --jobs 4 -- -runs=10000
