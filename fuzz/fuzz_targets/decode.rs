@@ -1,6 +1,6 @@
 #![no_main]
 
-use wasmi::*;
+use wai::*;
 
 use libfuzzer_sys::fuzz_target;
 use wasm_smith::Module as M;

@@ -1,6 +1,6 @@
-[![CI](https://github.com/k-nasa/wasmi/actions/workflows/ci.yml/badge.svg)](https://github.com/k-nasa/wasmi/actions/workflows/ci.yml)
+[![CI](https://github.com/k-nasa/wai/actions/workflows/ci.yml/badge.svg)](https://github.com/k-nasa/wai/actions/workflows/ci.yml)
 
-# wasmi (in progress)
+# wai (in progress)
 
 A simple wasm interpreter
 
@@ -14,13 +14,13 @@ https://user-images.githubusercontent.com/23740172/123268043-a353e000-d538-11eb-
 ## Usage
 
 ```bash
-:) % wasmi -h
-wasmi 0.1.0
+:) % wai -h
+wai 0.1.0
 k-nasa <htilcs1115@gmail.com>
 A simple wasm interpreter
 
 USAGE:
-    wasmi [OPTIONS] <file-path> --invoke <invoke>
+    wai [OPTIONS] <file-path> --invoke <invoke>
 
 ARGS:
     <file-path>
@@ -36,7 +36,7 @@ OPTIONS:
 
 ## Contribution
 
-1. Fork it ( http://github.com/k-nasa/wasmi )
+1. Fork it ( http://github.com/k-nasa/wai )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)
@@ -44,7 +44,7 @@ OPTIONS:
 
 ## Licence
 
-[MIT](https://github.com/k-nasa/wasmi/blob/master/LICENSE)
+[MIT](https://github.com/k-nasa/wai/blob/master/LICENSE)
 
 ## Author
 

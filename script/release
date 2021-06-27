@@ -40,12 +40,12 @@ install_rgh() {
 build_all() {
   rm -rf dist/
 
-  build x86_64-apple-darwin wasmi
-  build x86_64-unknown-linux-gnu wasmi
+  build x86_64-apple-darwin wai
+  build x86_64-unknown-linux-gnu wai
 }
 
 build() {
-  CRATE_NAME=wasmi
+  CRATE_NAME=wai
   MISC="README.md LICENSE"
 
   TARGET=$1

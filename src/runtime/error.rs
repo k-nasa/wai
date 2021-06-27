@@ -29,7 +29,7 @@ impl Display for RuntimeError {
                 expect, actual
             ),
             ExpectCodeSection => {
-                write!(f, "not found code section. wasmi is expected code section")
+                write!(f, "not found code section. wai is expected code section")
             }
             IOError(i) => write!(f, "io error: {}", i),
             Custom(s) => write!(f, "{}", s),
