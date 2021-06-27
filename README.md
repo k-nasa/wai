@@ -57,6 +57,13 @@ OPTIONS:
     -i, --invoke <invoke>
 ```
 
+## TODO
+
+- [ ] Pass the [wasm testsuite](https://github.com/WebAssembly/testsuite)
+- [ ] Implement validator
+- [ ] no_std
+- [ ] Support [WASI](https://wasi.dev/)
+
 ## Licence
 
 [MIT](https://github.com/k-nasa/wai/blob/master/LICENSE)
