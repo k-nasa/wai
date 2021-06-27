@@ -65,4 +65,4 @@
 )
 
 (assert_return (invoke "fib" (i32.const 10)) (i32.const 55))
-(; (assert_return (invoke "fib_recursive" (i32.const 10)) (i32.const 55)) ;)
+(assert_return (invoke "fib_recursive" (i32.const 10)) (i32.const 55))

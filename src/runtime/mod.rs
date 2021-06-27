@@ -13,8 +13,11 @@ pub use runtime_value::RuntimeValue;
 use crate::from_le::FromLe;
 use crate::instruction::Instruction;
 use crate::types::*;
+
 use activation_stack::{Activation, ActivationStack};
 use label_stack::{Label, LabelStack, LabelType};
+
+use std::collections::HashMap;
 
 type ValueStack = Vec<RuntimeValue>;
 
@@ -56,6 +59,7 @@ impl Runtime {
         while let Some(instruction) = self.instructions()?.get(self.pc()) {
             let instruction = instruction.clone();
             self.increment_pc()?;
+            dbg!(&instruction);
 
             match instruction {
                 Instruction::Reserved => {}
@@ -76,7 +80,20 @@ impl Runtime {
                 Instruction::Return => {
                     self.apop()?;
                 }
-                Instruction::Call(_) => todo!(),
+                Instruction::Call(index) => {
+                    let index = usize::from(index);
+                    let func = self
+                        .function_table
+                        .get(index)
+                        .expect("expect found function");
+
+                    let mut args = HashMap::new();
+                    for i in 0..func.params.len() {
+                        args.insert(i, self.vpop()?);
+                    }
+
+                    self.activation_stack.push(Activation::new(index, args));
+                }
                 Instruction::CallIndirect(_, _) => todo!(),
                 Instruction::Drop => {
                     self.vpop()?;
