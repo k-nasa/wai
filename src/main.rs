@@ -3,7 +3,7 @@ use wai::*;
 
 #[derive(Clap)]
 #[clap(
-    version = "0.1.0",
+    version = "0.2.0",
     author = "k-nasa <htilcs1115@gmail.com>",
     about = "A simple wasm interpreter"
 )]
