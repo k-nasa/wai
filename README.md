@@ -1,6 +1,6 @@
 [![CI](https://github.com/k-nasa/wai/actions/workflows/ci.yml/badge.svg)](https://github.com/k-nasa/wai/actions/workflows/ci.yml)
 
-# wai (in progress)
+# wai (WebAssembly interpreter)
 
 A simple wasm interpreter
 
