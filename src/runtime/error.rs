@@ -6,6 +6,9 @@ use std::fmt::{self, Display};
 pub enum RuntimeError {
     NotFound(String),
     ExpectCodeSection,
+    ExpectValueStack,
+    ExpectLabelStack,
+    ExpectActivationStack,
     InvalidArgs(Vec<ValueType>, Vec<ValueType>),
     IOError(std::io::Error),
     Custom(String),
@@ -17,6 +20,9 @@ impl Display for RuntimeError {
         use self::RuntimeError::*;
         match self {
             NotFound(name) => write!(f, "'{}'' is not found", name),
+            ExpectValueStack => write!(f, "expect value stack, but nothing"),
+            ExpectActivationStack => write!(f, "expect activation stack, but nothing"),
+            ExpectLabelStack => write!(f, "expect label stack, but nothing"),
             InvalidArgs(expect, actual) => write!(
                 f,
                 "Invalid argument: expect {:?},but got {:?}",

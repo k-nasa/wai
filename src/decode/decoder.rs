@@ -337,9 +337,9 @@ impl<'a> Decoder<'a> {
 
             let instruction = match opcode {
                 // expect BlockType
-                Opcode::Block => Instruction::Block(BlockType::from(self.read_next()?)),
-                Opcode::Loop => Instruction::Loop(BlockType::from(self.read_next()?)),
-                Opcode::If => Instruction::If(BlockType::from(self.read_next()?)),
+                Opcode::Block => Instruction::Block(BlockType::try_from(self.read_next()?)?),
+                Opcode::Loop => Instruction::Loop(BlockType::try_from(self.read_next()?)?),
+                Opcode::If => Instruction::If(BlockType::try_from(self.read_next()?)?),
 
                 // expect VerUintN
                 Opcode::Br => Instruction::Br(self.decode_ver_uint_n()?),

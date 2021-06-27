@@ -12,6 +12,8 @@ macro_rules! wasm_test {
 }
 
 wasm_test!(add, "./wat/add.wat");
+wasm_test!(fib, "./wat/fib.wat");
+
 wasm_test!(address, "./testsuite/address.wast");
 wasm_test!(binary, "./testsuite/binary.wast");
 wasm_test!(comments, "./testsuite/comments.wast");
@@ -19,6 +21,10 @@ wasm_test!(consts, "./testsuite/const.wast");
 wasm_test!(custom, "./testsuite/custom.wast");
 wasm_test!(data, "./testsuite/data.wast");
 wasm_test!(_type, "./testsuite/type.wast");
+// wasm_test!(select, "./testsuite/select.wast");
+// wasm_test!(_if, "./testsuite/if.wast");
+// wasm_test!(block, "./testsuite/block.wast");
+// wasm_test!(call, "./testsuite/call.wast");
 
 fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
     let mut buf = vec![];
@@ -35,6 +41,7 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
             WastDirective::Module(mut module) => {
                 let module_binary = module.encode()?;
                 m = Module::from_byte(module_binary)?;
+                dbg!(&m);
             }
             WastDirective::AssertReturn { exec, results, .. } => {
                 let (name, args) = match exec {
@@ -44,10 +51,13 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
 
                 let args: Vec<RuntimeValue> = args.iter().map(args_to_runtime_value).collect();
                 let instance = Instance::new(m.clone());
-                let actual = instance.invoke(&name, args.clone())?;
+                let actual = match instance.invoke(&name, args.clone()) {
+                    Ok(v) => v,
+                    Err(e) => panic!("\n====== failed assert {}==========\nerror: {}, ", name, e),
+                };
+
                 let expected: Vec<RuntimeValue> =
                     results.iter().map(result_to_runtime_value).collect();
-
                 let actual = actual
                     .iter()
                     .map(to_zero_nan)

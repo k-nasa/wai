@@ -1,5 +1,7 @@
-use crate::instruction::Instruction;
+use crate::decode::error::DecodeError;
+pub use crate::instruction::Instruction;
 use crate::runtime::RuntimeValue;
+use std::convert::TryFrom;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ValueType {
@@ -16,10 +18,10 @@ impl From<u8> for ValueType {
 
         match x {
             0x7f => I32,
-            0x02 => I64,
-            0x03 => F32,
-            0x04 => F64,
-            _ => Unknown,
+            0x7e => I64,
+            0x7d => F32,
+            0x7c => F64,
+            _ => unreachable!(),
         }
     }
 }
@@ -95,21 +97,53 @@ pub enum BlockType {
     F32,
     F64,
     Empty,
-    Unknown,
 }
 
-impl From<u8> for BlockType {
-    fn from(x: u8) -> Self {
+impl TryFrom<u8> for BlockType {
+    type Error = DecodeError;
+
+    fn try_from(x: u8) -> Result<Self, Self::Error> {
         use BlockType::*;
 
-        match x {
+        let t = match x {
             0x7f => I32,
-            0x02 => I64,
-            0x03 => F32,
-            0x04 => F64,
+            0x7e => I64,
+            0x7d => F32,
+            0x7c => F64,
             0x40 => Empty,
-            _ => Unknown,
-        }
+            _ => {
+                return Err(DecodeError::Unexpected(format!(
+                    "unexpected return type {}",
+                    x
+                )))
+            }
+        };
+
+        Ok(t)
+    }
+}
+impl TryFrom<VerUintN> for BlockType {
+    type Error = DecodeError;
+
+    fn try_from(x: VerUintN) -> Result<Self, Self::Error> {
+        use BlockType::*;
+
+        let x = x.into();
+        let t = match x {
+            0x7f => I32,
+            0x7e => I64,
+            0x7d => F32,
+            0x7c => F64,
+            0x40 => Empty,
+            _ => {
+                return Err(DecodeError::Unexpected(format!(
+                    "unexpected return type {}",
+                    x
+                )))
+            }
+        };
+
+        Ok(t)
     }
 }
 
