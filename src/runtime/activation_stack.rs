@@ -35,6 +35,10 @@ impl ActivationStack {
         self.0.pop()
     }
 
+    pub fn len(&mut self) -> usize {
+        self.0.len()
+    }
+
     pub fn push(&mut self, activation: Activation) {
         self.0.push(activation)
     }

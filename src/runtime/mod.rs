@@ -56,10 +56,8 @@ impl Runtime {
     ) -> Result<ValueStack, RuntimeError> {
         self.activation_stack = ActivationStack::init(func_index, args.to_vec());
 
-        while let Some(instruction) = self.instructions()?.get(self.pc()) {
-            let instruction = instruction.clone();
+        while let Some(instruction) = self.get_instruction()? {
             self.increment_pc()?;
-            dbg!(&instruction);
 
             match instruction {
                 Instruction::Reserved => {}
@@ -88,8 +86,9 @@ impl Runtime {
                         .expect("expect found function");
 
                     let mut args = HashMap::new();
-                    for i in 0..func.params.len() {
-                        args.insert(i, self.vpop()?);
+                    let len = func.params.len();
+                    for i in 0..len {
+                        args.insert(len - 1 - i, self.vpop()?);
                     }
 
                     self.activation_stack.push(Activation::new(index, args));
@@ -740,5 +739,21 @@ impl Runtime {
         }
 
         Ok(())
+    }
+
+    fn get_instruction(&mut self) -> Result<Option<Instruction>, RuntimeError> {
+        loop {
+            if self.activation_stack.len() == 0 {
+                return Ok(None);
+            }
+
+            let instructions = self.instructions()?;
+            let instruction = instructions.get(self.pc());
+            if instruction.is_some() {
+                return Ok(instruction.map(|v| v.clone()));
+            }
+
+            self.activation_stack.pop();
+        }
     }
 }
