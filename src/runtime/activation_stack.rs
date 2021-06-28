@@ -19,11 +19,7 @@ impl ActivationStack {
             locals.insert(i, locals_vec[i]);
         }
 
-        Self(vec![Activation {
-            function_index,
-            locals,
-            pc: 0,
-        }])
+        Self(vec![Activation::new(function_index, locals)])
     }
 
     pub fn pc(&mut self) -> Result<usize, RuntimeError> {
@@ -37,6 +33,14 @@ impl ActivationStack {
 
     pub fn pop(&mut self) -> Option<Activation> {
         self.0.pop()
+    }
+
+    pub fn len(&mut self) -> usize {
+        self.0.len()
+    }
+
+    pub fn push(&mut self, activation: Activation) {
+        self.0.push(activation)
     }
 
     pub fn set_pc(&mut self, pc: usize) -> Result<(), RuntimeError> {
@@ -101,4 +105,14 @@ pub struct Activation {
     pub function_index: usize,
 
     pub locals: Locals,
+}
+
+impl Activation {
+    pub fn new(function_index: usize, locals: Locals) -> Self {
+        Self {
+            function_index,
+            locals,
+            pc: 0,
+        }
+    }
 }

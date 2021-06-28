@@ -11,10 +11,10 @@
       (i32.eq (get_local $N) (i32.const 2))
       (then (return (i32.const 1)))
     )
-    (i32.add (call $fib_recursive
-      (i32.sub (get_local $N) (i32.const 1))
-      (i32.sub (get_local $N) (i32.const 2))
-    ))
+    (i32.add
+      (call $fib_recursive (i32.sub (local.get 0) (i32.const 2)))
+      (call $fib_recursive (i32.sub (local.get 0) (i32.const 1)))
+    )
   )
 
   ;; iterative implementation, avoids stack overflow
@@ -65,4 +65,4 @@
 )
 
 (assert_return (invoke "fib" (i32.const 10)) (i32.const 55))
-(; (assert_return (invoke "fib_recursive" (i32.const 10)) (i32.const 55)) ;)
+(assert_return (invoke "fib_recursive" (i32.const 10)) (i32.const 55))
