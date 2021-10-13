@@ -1,7 +1,7 @@
 use crate::decode;
 use crate::types::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Module {
     pub(crate) version: u32,
     pub(crate) custom_section: Option<()>,
@@ -16,26 +16,6 @@ pub struct Module {
     pub(crate) start_section: Option<()>,
     pub(crate) code_section: Option<CodeSection>,
     pub(crate) data_section: Option<DataSection>,
-}
-
-impl Default for Module {
-    fn default() -> Self {
-        Module {
-            version: 0,
-            custom_section: None,
-            type_section: None,
-            import_section: None,
-            function_section: None,
-            table_section: None,
-            memory_section: None,
-            global_section: None,
-            export_section: None,
-            element_section: None,
-            start_section: None,
-            code_section: None,
-            data_section: None,
-        }
-    }
 }
 
 impl Module {
