@@ -15,7 +15,7 @@ impl ActivationStack {
     pub fn init(function_index: usize, locals_vec: Vec<RuntimeValue>) -> Self {
         let mut locals: Locals = HashMap::new();
 
-        for i in 0..locals_vec.len() {
+        for (i, _) in locals_vec.iter().enumerate() {
             locals.insert(i, locals_vec[i]);
         }
 
