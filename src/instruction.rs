@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::opcode::Opcode;
 use crate::types::*;
 

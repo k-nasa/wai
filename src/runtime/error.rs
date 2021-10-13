@@ -1,6 +1,9 @@
+use alloc::string::String;
+use alloc::vec::Vec;
+
 use crate::types::*;
+use core::fmt::{self, Display};
 use std::error::Error;
-use std::fmt::{self, Display};
 
 #[derive(Debug)]
 pub enum RuntimeError {

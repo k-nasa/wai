@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::module::Module;
 use crate::runtime::{error::RuntimeError, FunctionTable, Memory, Runtime, RuntimeValue};
 use crate::types::*;

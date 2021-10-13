@@ -2,6 +2,7 @@
 
 #[macro_use]
 extern crate alloc;
+use alloc::prelude::*;
 
 mod decode;
 mod from_le;

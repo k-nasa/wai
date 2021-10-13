@@ -1,5 +1,5 @@
 use crate::decode::error::DecodeError;
-use std::convert::TryFrom;
+use core::convert::TryFrom;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Opcode {
