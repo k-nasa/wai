@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::from_le::FromLe;
 use crate::runtime::error::RuntimeError;
 
@@ -12,7 +14,7 @@ impl Memory {
     where
         T: FromLe,
     {
-        let size = std::mem::size_of::<T>();
+        let size = core::mem::size_of::<T>();
 
         // NOTE 長さが足りないときは伸ばしてしまう。
         // メモリの最大長は決まっているのでそれ以上は伸びないように制限する必要がある
