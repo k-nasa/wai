@@ -1,7 +1,7 @@
 use crate::decode::error::DecodeError;
 pub use crate::instruction::Instruction;
 use crate::runtime::RuntimeValue;
-use std::convert::TryFrom;
+use core::convert::TryFrom;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ValueType {
