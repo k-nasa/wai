@@ -1,3 +1,5 @@
+#![no_std]
+
 mod decode;
 mod from_le;
 mod instance;
