@@ -5,6 +5,7 @@ mod label_stack;
 pub mod memory;
 pub mod runtime_value;
 
+use alloc::vec::Vec;
 pub use error::RuntimeError;
 pub use function_table::FunctionTable;
 pub use memory::Memory;
