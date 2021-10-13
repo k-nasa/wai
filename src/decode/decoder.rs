@@ -1,4 +1,6 @@
 use alloc::collections::linked_list::Cursor;
+use alloc::string::String;
+use alloc::vec::Vec;
 
 use crate::decode::error::DecodeError;
 use crate::instruction::Instruction;

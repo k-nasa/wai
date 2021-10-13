@@ -1,5 +1,7 @@
+use core::fmt::{self, Display};
 use std::error::Error;
-use std::fmt::{self, Display};
+
+use alloc::string::String;
 
 #[derive(Debug)]
 pub enum DecodeError {
