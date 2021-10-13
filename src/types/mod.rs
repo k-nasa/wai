@@ -1,4 +1,4 @@
-use alloc::vec::Vec;
+use alloc::{string::String, vec::Vec};
 
 use crate::decode::error::DecodeError;
 pub use crate::instruction::Instruction;

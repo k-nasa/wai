@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::module::Module;
 use crate::types::*;
 
