@@ -750,7 +750,7 @@ impl Runtime {
             let instructions = self.instructions()?;
             let instruction = instructions.get(self.pc());
             if instruction.is_some() {
-                return Ok(instruction.map(|v| v.clone()));
+                return Ok(instruction.cloned());
             }
 
             self.activation_stack.pop();
