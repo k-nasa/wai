@@ -1,10 +1,11 @@
+use alloc::collections::linked_list::Cursor;
+
 use crate::decode::error::DecodeError;
 use crate::instruction::Instruction;
 use crate::module::{Section, SectionType};
 use crate::opcode::Opcode;
 use crate::types::*;
 use std::convert::TryFrom;
-use std::io::Cursor;
 use std::io::Read;
 
 const MAGIC_NUMBER: &[u8] = b"\0asm";

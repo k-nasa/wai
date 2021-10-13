@@ -1,11 +1,11 @@
 mod decoder;
 pub mod error;
 
+use alloc::collections::linked_list::Cursor;
 use decoder::Decoder;
 pub use error::DecodeError;
 
 use crate::module::Module;
-use std::io::Cursor;
 
 /// wasmバイナリをデコードしてwasm moduleを返す
 pub fn decode(buf: &[u8]) -> Result<Module, DecodeError> {
