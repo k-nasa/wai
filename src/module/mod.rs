@@ -97,3 +97,30 @@ pub enum Section {
     Code(CodeSection),
     Data(DataSection),
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn module_default_test() {
+        let m = Module::default();
+        let expect = Module {
+            version: 0,
+            custom_section: None,
+            type_section: None,
+            import_section: None,
+            function_section: None,
+            table_section: None,
+            memory_section: None,
+            global_section: None,
+            export_section: None,
+            element_section: None,
+            start_section: None,
+            code_section: None,
+            data_section: None,
+        };
+
+        assert_eq!(expect, m);
+    }
+}
