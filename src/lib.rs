@@ -1,5 +1,8 @@
 #![no_std]
 
+#[macro_use]
+extern crate alloc;
+
 mod decode;
 mod from_le;
 mod instance;

@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use crate::decode::error::DecodeError;
 pub use crate::instruction::Instruction;
 use crate::runtime::RuntimeValue;
