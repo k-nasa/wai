@@ -1,7 +1,7 @@
-use clap::{AppSettings, Clap};
+use clap::{AppSettings, Parser};
 use wai::*;
 
-#[derive(Clap)]
+#[derive(Parser)]
 #[clap(
     version = "0.2.0",
     author = "k-nasa <htilcs1115@gmail.com>",
