@@ -1,4 +1,4 @@
-use clap::{AppSettings, Parser};
+use clap::Parser;
 use wai::*;
 
 #[derive(Parser)]
@@ -7,7 +7,6 @@ use wai::*;
     author = "k-nasa <htilcs1115@gmail.com>",
     about = "A simple wasm interpreter"
 )]
-#[clap(setting = AppSettings::ColoredHelp)]
 struct Opts {
     file_path: String,
 
