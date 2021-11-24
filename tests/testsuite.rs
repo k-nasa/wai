@@ -11,8 +11,8 @@ macro_rules! wasm_test {
     };
 }
 
-wasm_test!(add, "./wat/add.wat");
-wasm_test!(fib, "./wat/fib.wat");
+wasm_test!(add, "./examples/wat/add.wat");
+wasm_test!(fib, "./examples/wat/fib.wat");
 
 wasm_test!(address, "./testsuite/address.wast");
 wasm_test!(binary, "./testsuite/binary.wast");
