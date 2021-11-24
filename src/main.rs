@@ -26,12 +26,20 @@ fn main() -> anyhow::Result<()> {
     let filename = opts.file_path;
     let bytes = std::fs::read(filename)?;
 
-    let m = Module::from_byte(bytes)?;
-    let instance = Instance::new(m);
-
-    // TODO implement custom argument
-    let values = instance.invoke(&opts.invoke, opts.args)?;
-    log::info!("return value is {:?}", values);
+    let result = run_wasm(bytes, opts.invoke, opts.args)?;
+    log::info!("return value is {:?}", result);
 
     Ok(())
+}
+
+fn run_wasm(
+    wasm_bytes: Vec<u8>,
+    entory_point: String,
+    args: Vec<RuntimeValue>,
+) -> anyhow::Result<Vec<RuntimeValue>> {
+    let m = Module::from_byte(wasm_bytes)?;
+    let instance = Instance::new(m);
+
+    let values = instance.invoke(&entory_point, args)?;
+    Ok(values)
 }
