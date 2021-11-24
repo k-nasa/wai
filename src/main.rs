@@ -26,6 +26,8 @@ fn main() -> anyhow::Result<()> {
     let filename = opts.file_path;
     let bytes = std::fs::read(filename)?;
 
+    log::info!("start exec {:?}, args {:?}", opts.invoke, opts.args);
+
     let result = run_wasm(bytes, opts.invoke, opts.args)?;
     log::info!("return value is {:?}", result);
 
