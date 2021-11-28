@@ -20,7 +20,7 @@ impl RuntimeValue {
             I64(_) => ValueType::I64,
             F32(_) => ValueType::F32,
             F64(_) => ValueType::F64,
-            _ => unreachable!(),
+            _ => unreachable!("unreachable type, but got {:?}", self),
         }
     }
 }

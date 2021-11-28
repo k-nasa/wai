@@ -64,7 +64,7 @@ impl Runtime {
                 Instruction::Prefix(_) => {}
                 Instruction::Nop => {}
 
-                Instruction::Unreachable => unreachable!(),
+                Instruction::Unreachable => unreachable!("call Unreachable instruction"),
                 Instruction::Block(result_type) => self.block(result_type),
                 Instruction::Loop(result_type) => self._loop(result_type),
                 Instruction::If(block_type) => self._if(block_type)?,
@@ -77,7 +77,9 @@ impl Runtime {
                 }
                 Instruction::Br(depth) => self.br(usize::from(depth))?,
                 Instruction::BrIf(depth) => self.br_if(usize::from(depth))?,
-                Instruction::BrTable(_, _) => todo!(),
+                // NOTE br_tableは未実装であるが、多くのテストがこのインストラクションに依存している。
+                // unimplementedマクロでパニックするとテスト時のハンドリングが難しいので、br_tableに関してはUnimplementedエラーを返してテストでハンドリングする
+                Instruction::BrTable(_, _) => Err(RuntimeError::Unimplemented)?,
                 Instruction::Return => {
                     self.apop()?;
                 }
@@ -676,11 +678,7 @@ impl Runtime {
 
     fn br(&mut self, depth: usize) -> Result<(), RuntimeError> {
         for _ in 0..depth {
-            if let Err(e) = self.lpop() {
-                dbg!(self.label_stack.len());
-                dbg!(depth);
-                println!("debug print: error {}", e);
-            }
+            self.lpop()?;
         }
 
         let label = if let Some(label) = self.label_stack.last() {
@@ -696,7 +694,7 @@ impl Runtime {
             }
             _ => {
                 for _ in 0..depth + 1 {
-                    self.skip_else_or_end()?
+                    self.skip_to_end()?
                 }
             }
         };
@@ -738,6 +736,19 @@ impl Runtime {
     fn skip_else_or_end(&mut self) -> Result<(), RuntimeError> {
         while let Some(instruction) = self.instructions()?.get(self.pc()) {
             if *instruction == Instruction::Else || *instruction == Instruction::End {
+                break;
+            }
+
+            self.increment_pc()?;
+            continue;
+        }
+
+        Ok(())
+    }
+
+    fn skip_to_end(&mut self) -> Result<(), RuntimeError> {
+        while let Some(instruction) = self.instructions()?.get(self.pc()) {
+            if *instruction == Instruction::End {
                 break;
             }
 

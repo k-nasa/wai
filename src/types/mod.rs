@@ -21,7 +21,7 @@ impl From<u8> for ValueType {
             0x7e => I64,
             0x7d => F32,
             0x7c => F64,
-            _ => unreachable!(),
+            _ => unreachable!("unreachable value type, but got {:0x}", x),
         }
     }
 }
