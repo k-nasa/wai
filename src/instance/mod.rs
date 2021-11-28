@@ -28,14 +28,19 @@ impl Instance {
         let function_table = FunctionTable::from_module(&self.module);
 
         let func = function_table.get(index).unwrap();
+        let return_length = func.returns.len();
+
+        println!("exec func info: {:?}", func);
 
         Instance::validate(&func.params, &args)?; // argsとfunc_type.paramsの個数、型をチェックする + errorをいい感じに表示してあげたい
         let memory = Memory::new(self.init_memory()?);
 
         let mut runtime = Runtime::new(function_table, memory);
-        let stack = runtime.execute(index, &args)?;
+        let mut stack = runtime.execute(index, &args)?;
 
-        Ok(stack)
+        stack.reverse();
+        let ret = &stack[0..return_length];
+        Ok(ret.to_vec())
     }
 
     fn resolve_function_name(&self, name: impl AsRef<str>) -> Option<usize> {
