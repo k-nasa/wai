@@ -58,6 +58,7 @@ impl FunctionTable {
     }
 }
 
+#[derive(Debug)]
 pub struct Function {
     pub params: Vec<ValueType>,
     pub returns: Vec<ValueType>,
