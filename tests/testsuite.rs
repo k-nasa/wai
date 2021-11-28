@@ -24,7 +24,7 @@ wasm_test!(_type, "./testsuite/type.wast");
 
 // NOTE
 // これらはbr_tableに依存しているが、br_tableの実装がまだ終わっていないのでコメントアウトしている
-// wasm_test!(br, "./testsuite/br.wast");
+wasm_test!(br, "./testsuite/br.wast");
 // wasm_test!(call, "./testsuite/call.wast");
 // wasm_test!(select, "./testsuite/select.wast");
 // wasm_test!(_if, "./testsuite/if.wast");

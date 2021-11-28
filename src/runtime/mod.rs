@@ -692,7 +692,7 @@ impl Runtime {
             }
             _ => {
                 for _ in 0..depth + 1 {
-                    self.skip_else_or_end()?
+                    self.skip_to_end()?
                 }
             }
         };
@@ -734,6 +734,19 @@ impl Runtime {
     fn skip_else_or_end(&mut self) -> Result<(), RuntimeError> {
         while let Some(instruction) = self.instructions()?.get(self.pc()) {
             if *instruction == Instruction::Else || *instruction == Instruction::End {
+                break;
+            }
+
+            self.increment_pc()?;
+            continue;
+        }
+
+        Ok(())
+    }
+
+    fn skip_to_end(&mut self) -> Result<(), RuntimeError> {
+        while let Some(instruction) = self.instructions()?.get(self.pc()) {
+            if *instruction == Instruction::End {
                 break;
             }
 
