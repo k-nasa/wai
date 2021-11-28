@@ -24,7 +24,7 @@ wasm_test!(_type, "./testsuite/type.wast");
 
 // NOTE
 // これらはbr_tableに依存しているが、br_tableの実装がまだ終わっていないのでコメントアウトしている
-wasm_test!(br, "./testsuite/br.wast");
+// wasm_test!(br, "./testsuite/br.wast");
 // wasm_test!(call, "./testsuite/call.wast");
 // wasm_test!(select, "./testsuite/select.wast");
 // wasm_test!(_if, "./testsuite/if.wast");
@@ -45,7 +45,6 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
             WastDirective::Module(mut module) => {
                 let module_binary = module.encode()?;
                 m = Module::from_byte(module_binary)?;
-                dbg!(&m);
             }
             WastDirective::AssertReturn { exec, results, .. } => {
                 let (name, args) = match exec {
@@ -55,6 +54,7 @@ fn assert_wasm(filepath: &str) -> anyhow::Result<()> {
 
                 let args: Vec<RuntimeValue> = args.iter().map(args_to_runtime_value).collect();
                 let instance = Instance::new(m.clone());
+                println!("{}", name);
                 let actual = match instance.invoke(&name, args.clone()) {
                     Ok(v) => v,
                     Err(e) => {
