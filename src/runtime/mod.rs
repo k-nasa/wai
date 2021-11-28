@@ -70,7 +70,10 @@ impl Runtime {
                 Instruction::If(block_type) => self._if(block_type)?,
                 Instruction::Else => self._else()?,
                 Instruction::End => {
-                    self.lpop()?;
+                    // FIXME スタックに値がないけど原因がよくわからないのでログを吐いて握りつぶしてしまう
+                    if let Err(e) = self.lpop() {
+                        println!("{}", e);
+                    }
                 }
                 Instruction::Br(depth) => self.br(usize::from(depth))?,
                 Instruction::BrIf(depth) => self.br_if(usize::from(depth))?,
@@ -673,7 +676,11 @@ impl Runtime {
 
     fn br(&mut self, depth: usize) -> Result<(), RuntimeError> {
         for _ in 0..depth {
-            self.lpop()?;
+            if let Err(e) = self.lpop() {
+                dbg!(self.label_stack.len());
+                dbg!(depth);
+                println!("debug print: error {}", e);
+            }
         }
 
         let label = if let Some(label) = self.label_stack.last() {
