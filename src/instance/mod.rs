@@ -25,7 +25,7 @@ impl Instance {
             Some(i) => i,
         };
 
-        let function_table = FunctionTable::from_module(&self.module);
+        let function_table = self.function_table();
 
         let func = function_table.get(index).unwrap();
         let return_length = func.returns.len();
@@ -41,6 +41,10 @@ impl Instance {
         stack.reverse();
         let ret = &stack[0..return_length];
         Ok(ret.to_vec())
+    }
+
+    pub fn function_table(&self) -> FunctionTable {
+        FunctionTable::from_module(&self.module)
     }
 
     fn resolve_function_name(&self, name: impl AsRef<str>) -> Option<usize> {
