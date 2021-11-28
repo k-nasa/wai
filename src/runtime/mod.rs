@@ -64,7 +64,7 @@ impl Runtime {
                 Instruction::Prefix(_) => {}
                 Instruction::Nop => {}
 
-                Instruction::Unreachable => unreachable!(),
+                Instruction::Unreachable => unreachable!("call Unreachable instruction"),
                 Instruction::Block(result_type) => self.block(result_type),
                 Instruction::Loop(result_type) => self._loop(result_type),
                 Instruction::If(block_type) => self._if(block_type)?,

@@ -106,7 +106,7 @@ fn args_to_runtime_value(expr: &wast::Expression) -> RuntimeValue {
         wast::Instruction::I64Const(x) => RuntimeValue::I64(*x),
         wast::Instruction::F32Const(x) => RuntimeValue::F32(f32::from_bits(x.bits)),
         wast::Instruction::F64Const(x) => RuntimeValue::F64(f64::from_bits(x.bits)),
-        _ => unreachable!(),
+        _ => unreachable!("{:?}", expr),
     }
 }
 
@@ -116,7 +116,9 @@ fn result_to_runtime_value(expr: &wast::AssertExpression) -> RuntimeValue {
         wast::AssertExpression::I64(x) => RuntimeValue::I64(*x),
         wast::AssertExpression::F32(x) => RuntimeValue::F32(to_f32(x)),
         wast::AssertExpression::F64(x) => RuntimeValue::F64(to_f64(x)),
-        _ => unreachable!(),
+        wast::AssertExpression::LegacyCanonicalNaN => RuntimeValue::F32(0.0),
+        wast::AssertExpression::LegacyArithmeticNaN => RuntimeValue::F32(0.0),
+        _ => unreachable!("{:?}", expr),
     }
 }
 
