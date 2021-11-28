@@ -676,11 +676,7 @@ impl Runtime {
 
     fn br(&mut self, depth: usize) -> Result<(), RuntimeError> {
         for _ in 0..depth {
-            if let Err(e) = self.lpop() {
-                dbg!(self.label_stack.len());
-                dbg!(depth);
-                println!("debug print: error {}", e);
-            }
+            self.lpop()?;
         }
 
         let label = if let Some(label) = self.label_stack.last() {
