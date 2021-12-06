@@ -40,6 +40,7 @@ fn run_wasm(
     args: Vec<RuntimeValue>,
 ) -> anyhow::Result<Vec<RuntimeValue>> {
     let m = Module::from_byte(wasm_bytes)?;
+    log::debug!("module: {:#?}", m);
     let instance = Instance::new(m);
 
     let values = instance.invoke(&entory_point, args)?;
