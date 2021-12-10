@@ -1,7 +1,7 @@
 [package]
 name = "wai"
 version = "0.2.0"
-edition = "2018"
+edition = "2021"
 authors = ["k-nasa <htilcs1115@gmail.com>"]
 description = "A simple wasm interpreter"
 repository = "https://github.com/k-nasa/wai"
