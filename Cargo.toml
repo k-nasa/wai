@@ -19,4 +19,4 @@ env_logger = "0.9.0"
 log = "0.4.14"
 
 [dev-dependencies]
-wast = "38.0.1"
+wast = "39.0.0"
