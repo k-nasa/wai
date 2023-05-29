@@ -16,7 +16,7 @@ keywords = ["wasm", "webassembly", "cli"]
 anyhow = "1.0.71"
 clap = {version = "4.1.6", features = ["derive"]}
 env_logger = "0.10.0"
-log = "0.4.17"
+log = "0.4.18"
 
 [dev-dependencies]
 wast = "40.0.0"
